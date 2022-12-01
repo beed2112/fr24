@@ -1,4 +1,4 @@
-desc=`grep -i $1 ./callSignDescription | awk -F @ '{print $2}'`
+#desc=`grep -i $1 ./callSignDescription | awk -F @ '{print $2}'`
 
 if [$desc == ""]
  then
@@ -72,6 +72,10 @@ case $1 in
 
   *"OXF"*)
     desc="a Flight School plane"
+    ;;
+    
+    *)
+    desc="an unknown aircraft"
     ;;
 esac
 
