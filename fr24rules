@@ -1,0 +1,93 @@
+watchfor /N507MP/ 
+        throttle 15:00,key=$15
+        echo blue 
+        exec /fr24/fr24mq.sh '$_[15]' 
+
+watchfor /COPPER/ 
+        throttle 15:00,key=$15
+        echo red  
+        exec /fr24/fr24mq.sh '$_[15]' 
+
+watchfor /MADCAT7/ 
+        throttle 15:00,key=$15
+        echo red  
+        exec /fr24/fr24mq.sh '$_[15]' 
+
+watchfor /N12718/ 
+        throttle 15:00,key=$15
+        echo red 
+        exec /fr24/fr24mq.sh '$_[15]' 
+
+watchfor /S211/ 
+        throttle 15:00,key=$15
+        echo red  
+        exec /fr24/fr24mq.sh '$_[15]' 
+
+watchfor /N16BP/ 
+        throttle 15:00,key=$15
+        echo red  
+        exec /fr24/fr24mq.sh '$_[15]' 
+
+watchfor /RAIDR30/ 
+        throttle 15:00,key=$15
+        echo red  
+        exec /fr24/fr24mq.sh '$_[15]' 
+
+watchfor /N55IAM/ 
+        throttle 15:00,key=$15
+        echo red  
+        exec /fr24/fr24mq.sh '$_[15]' 
+
+watchfor /,F16/ 
+        throttle 15:00,key=$15
+        echo red 
+        exec /fr24/fr24mq.sh '$_[15]' 
+
+watchfor /ZAPER/ 
+        throttle 15:00,key=$15
+        echo red 
+        exec /fr24/fr24mq.sh '$_[15]' 
+
+watchfor /TRON/ 
+        throttle 15:00,key=$15
+        echo red 
+        exec /fr24/fr24mq.sh '$_[15]' 
+
+watchfor /KYOTE/ 
+        throttle 15:00,key=$15
+        echo red 
+        exec /fr24/fr24mq.sh $_[15]
+
+
+
+watchfor /TNKR/ 
+        throttle 15:00,key=$15
+        echo red 
+        exec /fr24/fr24mq.sh '$_[15]' 
+
+watchfor /KING/ 
+        throttle 15:00,key=$15
+        echo red 
+        exec /fr24/fr24mq.sh '$_[15]' 
+
+watchfor /N724JH/ 
+        throttle 15:00,key=$15
+        echo red 
+        exec /fr24/fr24mq.sh '$_[15]' 
+
+watchfor /N70562/ 
+        throttle 15:00,key=$15
+        echo red 
+        exec /fr24/fr24mq.sh '$_[15]'
+ 
+
+watchfor /OXF/ 
+        throttle 15:00,key=$15
+        echo red
+        exec /fr24/fr24mq.sh '$_[15]'
+
+ 
+ watchfor /SNTRY/ 
+         throttle 15:00,key=$15
+        echo red 
+        exec /fr24/fr24mq.sh '$_[15]'

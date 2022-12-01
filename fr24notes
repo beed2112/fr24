@@ -1,0 +1,33 @@
+
+while  true  ; do nc  192.168.0.116 30003 | split  --filter="egrep -f  watchfor| sed 's/,/ /g'  |  logger " 2>/dev/null ; done
+
+dockershellsh -v "/var/log/:/log" -v "/home/beed2112/fr24:/fr24" swatchdog -c /fr24/fr24rules -t /log/user.log
+
+/usr/bin/swatchdog -c /fr24/fr24rules -t /log/user.log
+
+
+N507MP @ Mesa Police
+COPPER @ USAF TANKER
+MADCAT7 @ USAF TALON
+N12718 @ OLD SILVER PROP PLANE
+S211 @ ITALIAN FIGHTER
+N16BP @ BI PLANE
+RAIDR @ NAVY KC-130
+N55IAM @ NATIVE AIR HELICOPTOR
+,F16 @ F16 FIGHTER
+ZAPER @ USAF EC-130
+TRON @ USAF EC-130
+KYOTE @ US ARMY BLACKHAWK
+TNKR @ TANKER
+SNTRY @ Boeing E-3B Sentry
+
+
+1   2  3        4         5         6   7 8 9 1      1 1          1            1          1            1                  1
+                                              0      1 2          3            4          5            6                  7
+Nov 30 09:22:55 barchetta beed2112: MSG 1 1 1 AE07B9 1 2022/11/30 16:20:13.017 2022/11/30 16:20:13.578 COPPER6            0#015
+
+
+logger "MSG 1 1 1 AE07B9 1 2022/11/30 16:20:13.017 2022/11/30 16:20:13.578 KYOTE2112            0#015"
+
+
+mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "message" 
