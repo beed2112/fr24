@@ -1,4 +1,4 @@
-an desc=`grep -i $1 ./callSignDescription | awk -F @ '{print $2}'`
+desc=`grep -i $1 ./callSignDescription | awk -F @ '{print $2}'`
 
 if [$desc == ""]
  then
