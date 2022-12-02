@@ -7,11 +7,15 @@ fi
 
 STR='GNU/Linux is an operating system'
 SUB='Linux'
-
+ echo $1
 case $1 in
 
   *"N507MP"*)
-    desc="the Mesa Police"
+    desc="a Mesa Police Helicoptor"
+    ;;
+
+  *"N505MP"*)
+    desc="a Mesa Police Helicoptor"
     ;;
 
   *"COPPER"*)
@@ -22,7 +26,7 @@ case $1 in
     desc="an Air Force Training Jet"
     ;;
 
-  *"N12718 "*)
+  *"N12718"*)
     desc="an Old Silver prop plane"
     ;;
 
@@ -58,7 +62,7 @@ case $1 in
     desc="an Air Force Tanker"
     ;;
 
-  *"F16"*)
+  "F16"*)
     desc="an Air Force F sixteen"
     ;;
 
@@ -70,10 +74,18 @@ case $1 in
     desc="a Boeing Sentry RADAR"
     ;;
 
-  *"OXF"*)
+  "OXF"*)
     desc="a Flight School plane"
     ;;
-    
+
+
+  "HGT"*)
+    desc="an Intel Air Shuttle"
+    ;;
+
+  "DOJ"*)
+    desc="a US Marshall, Con Air flight "
+    ;;
     *)
     desc="an unknown aircraft"
     ;;
