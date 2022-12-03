@@ -1,0 +1,6 @@
+DUMP1090IP=192.168.0.116
+DUMP1090PORT=30003
+MQTTIP=192.168.0.253
+MQTTPORT=1883
+MQTTTOPIC=planes/watchfor
+CALLSIGNDESCRIPTION=https://raw.githubusercontent.com/beed2112/fr24/masterOfAll/callSignDescription
