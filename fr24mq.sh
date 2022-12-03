@@ -11,24 +11,25 @@ CALLSIGNDESCRIPTION=`grep CALLSIGNDESCRIPTION fr24mq.confg | awk -F= '{print $2}
 
 
 inplane=$1 
-echo "$DUMP1090IP"
-echo "$DUMP1090PORT"
-echo "$MQTTIP"
-echo "$MQTTPORT"
-echo "$MQTTTOPIC"
-echo "$CALLSIGNDESCRIPTION"
+#echo "$DUMP1090IP"
+#echo "$DUMP1090PORT"
+#echo "$MQTTIP"
+#echo "$MQTTPORT"
+#echo "$MQTTTOPIC"
+#echo "$CALLSIGNDESCRIPTION"
 
 descout="unknown aircraft"
 
 for foo in `sed 's/ /-/g' /fr24/callSignDescription | awk -F@ '{print $1"@"$2}` 
 do 
-  echo "in for loop"
+ # echo "in for loop"
  res=`echo $foo | sed 's/ /-/g'`
  call=`echo $foo | awk -F@ '{print $1}'`
  desc=`echo $foo | awk -F@ '{print $2}' | sed 's/-/ /g'`
 #echo "$inplane    $call"
  #echo " $desc      $call"
  
+ #echo "$inplane from file --> $call - $desc"
  
  if [[ "$inplane"  =~ .*"$call"*. ]]; then 
     descout="$desc"
@@ -37,8 +38,8 @@ do
 done
 
 
-echo "output $inplane    $descout"
-#mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "$inplane, $descout"
+#echo "output $inplane    $descout"
+mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "$inplane, $descout"
 
 
 # case $1 inS
