@@ -7,16 +7,16 @@ MQTTPORT=`grep MQTTPORT fr24mq.confg | awk -F= '{print $2}'`
 MQTTTOPIC=`grep MQTTTOPIC fr24mq.confg | awk -F= '{print $2}'`
 CALLSIGNDESCRIPTION=`grep CALLSIGNDESCRIPTION fr24mq.confg | awk -F= '{print $2}'`
 
- echo "$1"
+ #echo "$1"
 
 
 inplane=$1 
-echo "$DUMP1090IP"
-echo "$DUMP1090PORT"
-echo "$MQTTIP"
-echo "$MQTTPORT"
-echo "$MQTTTOPIC"
-echo "$CALLSIGNDESCRIPTION"
+# echo "$DUMP1090IP"
+# echo "$DUMP1090PORT"
+# echo "$MQTTIP"
+# echo "$MQTTPORT"
+# echo "$MQTTTOPIC"
+# echo "$CALLSIGNDESCRIPTION"
 
 descout="unknown aircraft"
 
