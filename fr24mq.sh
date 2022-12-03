@@ -20,7 +20,7 @@ echo "$CALLSIGNDESCRIPTION"
 
 descout="unknown aircraft"
 
-for foo in `awk -F@ '{print $1"@"$2}' /fr24/callSignDescription ` 
+for foo in `sed 's/ /-/g' /fr24/callSignDescription | awk -F@ '{print $1"@"$2}` 
 do 
   echo "in for loop"
  res=`echo $foo | sed 's/ /-/g'`
