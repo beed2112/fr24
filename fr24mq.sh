@@ -28,7 +28,7 @@ do
  desc=`echo $foo | awk -F@ '{print $2}' | sed 's/-/ /g'`
 #echo "$inplane    $call"
  #echo " $desc      $call"
- echo "$inplane from file --> $call - $desc"
+ #echo "$inplane from file --> $call - $desc"
  
  if [[ "$inplane"  =~ .*"$call"*. ]]; then 
     descout="$desc"
