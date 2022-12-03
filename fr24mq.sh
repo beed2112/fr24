@@ -1,5 +1,7 @@
 #desc=`grep -i $1 ./callSignDescription | awk -F @ '{print $2}'`
 
+cd /fr24
+
 DUMP1090IP=`grep DUMP1090IP fr24mq.confg | awk -F= '{print $2}'`
 DUMP1090PORT=`grep DUMP1090PORT fr24mq.confg | awk -F= '{print $2}'`
 MQTTIP=`grep MQTTIP fr24mq.confg | awk -F= '{print $2}'`
