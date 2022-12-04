@@ -1,7 +1,9 @@
 FROM alpine
 LABEL maintainer=beed2112
 
-RUN apk --no-cache add swatch ssmtp mosquitto mosquitto-clients
+RUN apk --no-cache add swatch ssmtp mosquitto mosquitto-clients tzdata
+
+ENV TZ=America/Phoenix
 
 RUN mkdir -p /logs
 RUN mkdir /fr24 
