@@ -38,8 +38,8 @@ do
 
 done
 
-
-echo "output $inplane    $descout"
+mydate=`date`
+echo "$mydate -  $inplane    $descout"
 mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "$inplane, $descout"
 
 
