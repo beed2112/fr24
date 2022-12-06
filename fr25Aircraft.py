@@ -30,6 +30,7 @@ sampling_period_seconds = int(sampling_period)
 
 # bucket = client.get_bucket(output_bucket)
 
+get the file from the receiver box
 receiver_url ='http://192.168.0.116'
 while True:
   r = requests.get(f'{receiver_url}/dump1090/data/aircraft.json')
@@ -63,6 +64,8 @@ while True:
 # "mlat":[],
 # "tisb":
 
+#grab the icaohex code from aircraft and pass it to the web api -- 
+#call returns all sorts of fun values --
   i = 00
   while i < info_data['aircraft_count']:
    icaohex = aircraft_data['aircraft'][i]['hex']
