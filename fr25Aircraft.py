@@ -65,13 +65,15 @@ while True:
 
   i = 00
   while i < info_data['aircraft_count']:
-   callsignin = aircraft_data['aircraft'][i]['hex']
-   callsign = requests.get(f'https://hexdb.io/api/v1/aircraft/{callsignin}')
+   icaohex = aircraft_data['aircraft'][i]['hex']
+   icao_response = requests.get(f'https://hexdb.io/api/v1/aircraft/{icaohex}')
 
-   if callsign.status_code == 200:
-     print(callsign.text)
+   icao_data = icao_response.json()
+
+   if icao_response.status_code == 200:
+     #print(callsign.text)
     #raise ValueError(f'ERROR: getting data from hexdb.io:{callsign.text}')  
-   #print(callsign['text']['Registration'], callsign['text']['ICAOTypeCode'], callsign['text']['OperatorFlagCode'], callsign['text']['RegisteredOwners'], callsign['text']['Type'])
+     print(icao_data['Registration'], icao_data['ICAOTypeCode'], icao_data['OperatorFlagCode'], icao_data['RegisteredOwners'], icao_data['Type'])
    
    #print(callsign['text'])
 #    if "flight" in  aircraft_data['aircraft'][i]:  
@@ -91,7 +93,6 @@ while True:
 #  print(f'INFO: Uploaded : {file_name}')
   
   time.sleep(sampling_period)
-
 
 
 
