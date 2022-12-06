@@ -73,7 +73,7 @@ while True:
    if icao_response.status_code == 200:
      #print(callsign.text)
     #raise ValueError(f'ERROR: getting data from hexdb.io:{callsign.text}')  
-     print(icao_data['Registration'], icao_data['ICAOTypeCode'], icao_data['OperatorFlagCode'], icao_data['RegisteredOwners'], icao_data['Type'])
+     print(icaohex, icao_data['Registration'], icao_data['ICAOTypeCode'], icao_data['OperatorFlagCode'], icao_data['RegisteredOwners'], icao_data['Type'])
    
    #print(callsign['text'])
 #    if "flight" in  aircraft_data['aircraft'][i]:  
