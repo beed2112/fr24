@@ -4,7 +4,7 @@ import json
 import time
 
 import requests
-
+from termcolor import colored
 
 
 # device_id = os.getenv('DEVICE_ID')
@@ -26,13 +26,27 @@ sampling_period =60
 
 sampling_period_seconds = int(sampling_period)
 
+excludeList="AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,AAY,ASH,DAL,ENY,NKS"
+watchList="States"
+watchList2="Police"
+watchList3="Enforcement"
+#watchList3="United Parcel"
+watchReg="N44SF,N812LE"
+watchICAO="F16,S211,BE18,AJET,KMAX,HGT"
+
+
+
 # client = storage.Client()
-
+#print (sys.argv[1])
+#getIt=sys.argv[1]
+#getIt=sys.argv[1]
+getIt="history_0.json"
 # bucket = client.get_bucket(output_bucket)
-
-get the file from the receiver box
+x=0
 receiver_url ='http://192.168.0.116'
 while True:
+
+  #r = requests.get(f'{receiver_url}/dump1090/{getIt}')
   r = requests.get(f'{receiver_url}/dump1090/data/aircraft.json')
 
   if r.status_code != 200:
@@ -46,6 +60,9 @@ while True:
     'aircraft_count' : len(aircraft_data['aircraft']),
     'messages': aircraft_data['messages']
   }
+  print ("+++------------------------------------------------------------------------------------------------------+++", getIt)
+ # print('INFO: ' + json.dumps(info_data))
+
 
   #aircraft_data['aircraft'][00]
 #loop aircraft keys count starts at 0  while lt aircraft count 
@@ -64,8 +81,15 @@ while True:
 # "mlat":[],
 # "tisb":
 
-#grab the icaohex code from aircraft and pass it to the web api -- 
-#call returns all sorts of fun values --
+#print(icaohex, "|", icao_data['Registration'], "|", icao_data['ICAOTypeCode'], "|", icao_data['OperatorFlagCode'], "|", icao_data['RegisteredOwners'], "|", icao_data['Type'])
+#nan    |168067   | C30J | C30J | United States Marine Corps KC-130J Hercules
+#ae4be3 | 10-5716 | C30J | C30J | United States Air Force | HC-130J Hercules 
+#a1c2c4 | N212UT | S211 | S211 | Flight Research Inc | S.211
+#ab9b84 | N847TA | F16 | F16 | Top Aces Inc | F-16B Netz
+
+
+
+#ae4be3 | 10-5716 | C30J | C30J | United States Air Force | HC-130J Hercules 
   i = 00
   while i < info_data['aircraft_count']:
    icaohex = aircraft_data['aircraft'][i]['hex']
@@ -74,10 +98,24 @@ while True:
    icao_data = icao_response.json()
 
    if icao_response.status_code == 200:
-     #print(callsign.text)
-    #raise ValueError(f'ERROR: getting data from hexdb.io:{callsign.text}')  
-     print(icaohex, icao_data['Registration'], icao_data['ICAOTypeCode'], icao_data['OperatorFlagCode'], icao_data['RegisteredOwners'], icao_data['Type'])
-   
+       if icao_data['OperatorFlagCode'] not in excludeList:
+         localtime = time.asctime( time.localtime(time.time()) )
+         owners=icao_data['RegisteredOwners']
+         res=owners.find(watchList, 1)
+         res=res + owners.find(watchList2, 1)
+         res=res + owners.find(watchList3, 1)
+         icao_data['Registration']
+         if res > 0 or icao_data['OperatorFlagCode']  in watchICAO or icao_data['Registration'] in watchReg:
+           outcolor="yellow"
+         else:
+           outcolor="white"   
+         #print(colored('hello', 'red'), colored('world', 'green'))
+         outLine=str(localtime) +" | " + str(icaohex)+ " | "+ str(icao_data['Registration'])+ " | "+ str(icao_data['ICAOTypeCode'])+ " | "+ str(icao_data['OperatorFlagCode'])+ " | "+ str(icao_data['RegisteredOwners'])+ " | "+ str(icao_data['Type'])
+         #print(colored(localtime, outcolor), "|", icaohex, "|", icao_data['Registration'], "|", icao_data['ICAOTypeCode'], "|", icao_data['OperatorFlagCode'], "|", icao_data['RegisteredOwners'], "|", icao_data['Type'])
+         print(colored(outLine, outcolor))
+   #else:
+     #sprint(aircraft_data['aircr         #print(callsign.text)
+         #raise ValueError(f'ERROR: getting data from hexdb.io:{callsign.text}')  ft'][i]['hex'])  
    #print(callsign['text'])
 #    if "flight" in  aircraft_data['aircraft'][i]:  
 #     print(aircraft_data['aircraft'][i]['hex'], aircraft_data['aircraft'][i]['flight'])
@@ -86,7 +124,7 @@ while True:
    i += 1
 
 
-  print('INFO: ' + json.dumps(info_data))
+  #print('INFO: ' + json.dumps(info_data))
 
 #   file_name = f'{device_id}/{now}.json'
 
@@ -96,7 +134,7 @@ while True:
 #  print(f'INFO: Uploaded : {file_name}')
   
   time.sleep(sampling_period)
-
+  
 
 
 
