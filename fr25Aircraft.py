@@ -27,7 +27,7 @@ sampling_period =60
 sampling_period_seconds = int(sampling_period)
 
 excludeList="AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,AAY,ASH,DAL,ENY,NKS"
-watchlistOwner= ["United States", "Utah Trustee", "Police", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA"]
+watchlistOwner= ["United States", "Utah Trustee", "Police", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Royal Canadian Air Force"]
 watchReg="N44SF,N812LE"
 watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75"
 
