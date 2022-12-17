@@ -243,8 +243,7 @@ while True:
          
 
 
-        outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type()) + " | "+  str(aircraftSession[itemNum].get_Interesting()) + " | " + knownPlane + " | " + str(minutes)
-        #print(str(aircraftSession[len(aircraftSession)-1].get_WhenSeen()) )
+        outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type())        #print(str(aircraftSession[len(aircraftSession)-1].get_WhenSeen()) )
         #outLine=str(localtime) +" | " + str(icaohex)+ " | "+ str(icao_data['Registration'])+ " | "+ str(icao_data['ICAOTypeCode'])+ " | "+ str(icao_data['OperatorFlagCode'])+ " | "+ str(icao_data['RegisteredOwners'])+ " | "+ str(icao_data['Type'])
         print(colored(outLine, outcolor))    
 
