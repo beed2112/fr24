@@ -162,7 +162,7 @@ sampling_period =60
 sampling_period_seconds = int(sampling_period)
 
 excludeOperatorList="AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,AAY,ASH,DAL,ENY,NKS"
-watchlistOwner= ["United States", "Utah Trustee", "Police", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Royal Canadian Air Force"]
+watchlistOwner= ["United States", "Utah Trustee", "Police", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA","Royal Canadian Air Force", "Flying Museum"]
 watchReg="N44SF,N812LE"
 watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75"
 
@@ -230,11 +230,13 @@ while True:
         outcolor="white"
         minutes = 0 
         if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
-            
+            outcolor="green"
             timeSince = datetime.datetime.now() - aircraftSession[itemNum].get_WhenSeenComputer()  
             minutes = timeSince.total_seconds() / 60
             if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
                outcolor="yellow" 
+               localtimeComputer = datetime.datetime.now()
+               aircraftSession[itemNum].set_AlertTime(localtimeComputer)
                mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type())
                cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "' + mqout + '"'
                os.system(cmd)
