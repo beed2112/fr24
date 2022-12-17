@@ -235,6 +235,8 @@ while True:
             minutes = timeSince.total_seconds() / 60
             if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
                outcolor="yellow" 
+               mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) "  " + str(aircraftSession[itemNum].get_Type())
+               mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "$inplane, $descout"
             
 
         outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type()) + " | "+  str(aircraftSession[itemNum].get_Interesting()) + " | " + knownPlane + " | " + str(minutes)
