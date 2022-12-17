@@ -20,6 +20,7 @@ class Aircraft:
     aircraftType = ""
     aircraftWhenSeen = ""
     ircraftWhenSeenCompter = ""
+    AlertTime = ""
 
     def __init__(self, aircraftID):
         self.aircraftID = aircraftID
@@ -69,6 +70,11 @@ class Aircraft:
     def get_Interesting(self):
         return self.aircraftInteresting
 
+    def set_AlertTime(self, aTime):
+        self.aircraftAlertTime = aTime
+
+    def get_AlertTime(self):
+        return self.aircraftAlertTime  
 ## end Aircraft class
 
 
@@ -110,12 +116,14 @@ def addAircraft(aircraftID):
             p.set_Type(str(icao_data['Type']))
             p.set_Owner(str(icao_data['RegisteredOwners']))
             localtime = time.asctime( time.localtime(time.time()) )
-
+            localtimeComputer = datetime.datetime.now()
             p.set_WhenSeen(str(localtime))
-            p.set_WhenSeenComputer(datetime.datetime.now())
+            p.set_WhenSeenComputer(localtimeComputer)
 
             if (interestingAircraft()):
                 p.set_Interesting("True")
+                p.set_AlertTime(localtimeComputer)
+
             else:
                 p.set_Interesting("False")
 
@@ -222,11 +230,12 @@ while True:
         outcolor="white"
         minutes = 0 
         if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
-            outcolor="yellow"
+            
             timeSince = datetime.datetime.now() - aircraftSession[itemNum].get_WhenSeenComputer()  
             minutes = timeSince.total_seconds() / 60
-            if (minutes > 15):
-                outcolor="green"
+            if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
+               outcolor="yellow" 
+            
 
         outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type()) + " | "+  str(aircraftSession[itemNum].get_Interesting()) + " | " + knownPlane + " | " + str(minutes)
         #print(str(aircraftSession[len(aircraftSession)-1].get_WhenSeen()) )
