@@ -161,10 +161,10 @@ sampling_period =60
 
 sampling_period_seconds = int(sampling_period)
 
-excludeOperatorList="AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,AAY,ASH,DAL,ENY,NKS"
-watchlistOwner= ["United States", "Utah Trustee", "Police", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA","Royal Canadian Air Force", "Flying Museum"]
-watchReg="N44SF,N812LE"
-watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75"
+excludeOperatorList="AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,AAY,ASH,DAL,ENY,NKS,VOI,JBU,WSW"
+watchlistOwner= ["United States", "Orah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Flying Museum", "Google", "Apple"]
+watchReg="N44SF,N812LE,N353P"
+watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR"
 
 global aircraftSession
 
@@ -195,7 +195,7 @@ while True:
   
   
   
-  print ("+++------------------------------------------------------------------------------------------------------+++")
+  print ("+++--------------------------------------------------------------------------------------------------------------------------------S-------------------+++")
 
 #loop thru the aircraft 
   i = 00
@@ -231,19 +231,23 @@ while True:
         minutes = 0 
         if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
             outcolor="green"
-            timeSince = datetime.datetime.now() - aircraftSession[itemNum].get_WhenSeenComputer()  
+            timeSince = datetime.datetime.now() - aircraftSession[itemNum].get_AlertTime() 
             minutes = timeSince.total_seconds() / 60
             if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
                outcolor="yellow" 
                localtimeComputer = datetime.datetime.now()
                aircraftSession[itemNum].set_AlertTime(localtimeComputer)
-               mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type())
+               mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
+               localtime = time.asctime( time.localtime(time.time()) )
+               mqout2 = localtime  + " " + str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
                cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "' + mqout + '"'
                os.system(cmd)
-         
+               cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchforLong -u me -P me -m "' + mqout2 + '"'
+               os.system(cmd)         
 
 
-        outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type())        #print(str(aircraftSession[len(aircraftSession)-1].get_WhenSeen()) )
+        outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type()) 
+        #print(str(aircraftSession[len(aircraftSession)-1].get_WhenSeen()) )
         #outLine=str(localtime) +" | " + str(icaohex)+ " | "+ str(icao_data['Registration'])+ " | "+ str(icao_data['ICAOTypeCode'])+ " | "+ str(icao_data['OperatorFlagCode'])+ " | "+ str(icao_data['RegisteredOwners'])+ " | "+ str(icao_data['Type'])
         print(colored(outLine, outcolor))    
 
