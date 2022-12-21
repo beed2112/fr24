@@ -93,12 +93,22 @@ def returnPlaneIndex(aircraftID):
             return count
         count = count + 1
     return -1 
-        
+
+def isKnownNoHit(aircraftID):
+    global noHitSession
+    for p in noHitSession:
+        if( p == aircraftID):
+            return True
+    return False
+
+
+
 def addAircraft(aircraftID):
 
     global aircraftSession
     global icaoData
     global localtime
+    global interestingAircraftCount 
 
     icao_response = requests.get(f'https://hexdb.io/api/v1/aircraft/{aircraftID}')
 
@@ -135,7 +145,7 @@ def interestingAircraft():
     owners=icao_data['RegisteredOwners']
     strICAO = str(icao_data['OperatorFlagCode'])
     strReg = str(icao_data['Registration'])
-
+    global interestingAircraftCount 
     interestCount = 0
     o= 0
     while o < len(watchlistOwner):
@@ -150,7 +160,11 @@ def interestingAircraft():
         interestCount += 1        
 
     if interestCount > 0:
+       interestingAircraftCount  += 1
+       cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/interestingAircraft -u me -P me -m "' + str(interestingAircraftCount) + '"'
+       os.system(cmd) 
        return True
+       
     else:
         return False
 
@@ -164,14 +178,15 @@ sampling_period_seconds = int(sampling_period)
 excludeOperatorList="AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,AAY,ASH,DAL,ENY,NKS,VOI,JBU,WSW"
 watchlistOwner= ["United States", "Orah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Flying Museum", "Google", "Apple"]
 watchReg="N44SF,N812LE,N353P"
-watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR"
+watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1"
 
 global aircraftSession
 
 aircraftSession = []
 
-
-
+interestingAircraftCount = 0
+alertCount = 0 
+nohit=0
 # grab aircraft.json from the reciever
 
 receiver_url ='http://192.168.0.116'
@@ -195,10 +210,11 @@ while True:
   
   
   
-  print ("+++--------------------------------------------------------------------------------------------------------------------------------S-------------------+++")
+  print ("+++-------------------------------------------------------------------------------------------------------------------------------------------------------------+++")
 
 #loop thru the aircraft 
   i = 00
+
   while i < info_data['aircraft_count']:
    icaohex = aircraft_data['aircraft'][i]['hex']
    icao_response = requests.get(f'https://hexdb.io/api/v1/aircraft/{icaohex}')
@@ -227,6 +243,11 @@ while True:
             addAircraft(str(icaohex))
             itemNum = len(aircraftSession)-1
         
+     
+     
+        cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/Aircraft -u me -P me -m "' + str(len(aircraftSession)) + '"'
+        os.system(cmd)  
+
         outcolor="white"
         minutes = 0 
         if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
@@ -243,6 +264,9 @@ while True:
                cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "' + mqout + '"'
                os.system(cmd)
                cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchforLong -u me -P me -m "' + mqout2 + '"'
+               os.system(cmd) 
+               alertCount  += 1
+               cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/alerts -u me -P me -m "' + str(alertCount) + '"'
                os.system(cmd)         
 
 
@@ -250,6 +274,10 @@ while True:
         #print(str(aircraftSession[len(aircraftSession)-1].get_WhenSeen()) )
         #outLine=str(localtime) +" | " + str(icaohex)+ " | "+ str(icao_data['Registration'])+ " | "+ str(icao_data['ICAOTypeCode'])+ " | "+ str(icao_data['OperatorFlagCode'])+ " | "+ str(icao_data['RegisteredOwners'])+ " | "+ str(icao_data['Type'])
         print(colored(outLine, outcolor))    
+   else:
+        nohit += 1 
+        cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/nohit -u me -P me -m "' + icaohex + " " + str(nohit) +'"'
+        os.system(cmd)  
 
 
    i += 1
