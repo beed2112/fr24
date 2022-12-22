@@ -94,8 +94,8 @@ def returnPlaneIndex(aircraftID):
         count = count + 1
     return -1 
 
-def isKnownNoHit(aircraftID):
-    global noHitSession
+def isKnownNoHitCheck(aircraftID):
+    
     for p in noHitSession:
         if( p == aircraftID):
             return True
@@ -110,36 +110,36 @@ def addAircraft(aircraftID):
     global localtime
     global interestingAircraftCount 
 
-    icao_response = requests.get(f'https://hexdb.io/api/v1/aircraft/{aircraftID}')
+#    icao_response = requests.get(f'https://hexdb.io/api/v1/aircraft/{aircraftID}')
 
-    icao_data = icao_response.json()
+#    icao_data = icao_response.json()
     icaoData ="False"
-    if icao_response.status_code == 200:
-        icaoData ="True"
-        if str(icao_data['OperatorFlagCode']) not in excludeOperatorList:
-            owners=icao_data['RegisteredOwners']
-            strICAO = str(icao_data['OperatorFlagCode'])
-            strReg = str(icao_data['Registration'])
-            p = Aircraft(str(aircraftID))
-            p.set_Registration(str(icao_data['Registration']))
-            p.set_OperatorFlagCode(str(icao_data['OperatorFlagCode']))
-            p.set_Type(str(icao_data['Type']))
-            p.set_Owner(str(icao_data['RegisteredOwners']))
-            localtime = time.asctime( time.localtime(time.time()) )
-            localtimeComputer = datetime.datetime.now()
-            p.set_WhenSeen(str(localtime))
-            p.set_WhenSeenComputer(localtimeComputer)
+ #   if icao_response.status_code == 200:
+    icaoData ="True"
+    if str(icao_data['OperatorFlagCode']) not in excludeOperatorList:
+        owners=icao_data['RegisteredOwners']
+        strICAO = str(icao_data['OperatorFlagCode'])
+        strReg = str(icao_data['Registration'])
+        p = Aircraft(str(aircraftID))
+        p.set_Registration(str(icao_data['Registration']))
+        p.set_OperatorFlagCode(str(icao_data['OperatorFlagCode']))
+        p.set_Type(str(icao_data['Type']))
+        p.set_Owner(str(icao_data['RegisteredOwners']))
+        localtime = time.asctime( time.localtime(time.time()) )
+        localtimeComputer = datetime.datetime.now()
+        p.set_WhenSeen(str(localtime))
+        p.set_WhenSeenComputer(localtimeComputer)
 
-            if (interestingAircraft()):
-                p.set_Interesting("True")
-                p.set_AlertTime(localtimeComputer)
+        if (interestingAircraft()):
+            p.set_Interesting("True")
+            p.set_AlertTime(localtimeComputer)
 
-            else:
-                p.set_Interesting("False")
+        else:
+            p.set_Interesting("False")
 
-            aircraftSession.append(p)
+        aircraftSession.append(p)
             
-    return
+#    return
 
 def interestingAircraft():
     owners=icao_data['RegisteredOwners']
@@ -181,8 +181,11 @@ watchReg="N44SF,N812LE,N353P"
 watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1"
 
 global aircraftSession
+global icao_data
+global icao_response
 
 aircraftSession = []
+noHitSession = []
 
 interestingAircraftCount = 0
 alertCount = 0 
@@ -217,72 +220,75 @@ while True:
 
   while i < info_data['aircraft_count']:
    icaohex = aircraft_data['aircraft'][i]['hex']
-   icao_response = requests.get(f'https://hexdb.io/api/v1/aircraft/{icaohex}')
+   knownNoHit = "False"
 
-   icao_data = icao_response.json()
+   if ( not isKnownNoHitCheck(icaohex) ):
+      knownNoHit = "False" 
+      icao_response = requests.get(f'https://hexdb.io/api/v1/aircraft/{icaohex}')
+      icao_data = icao_response.json()
 
-   if icao_response.status_code == 200:
-       if str(icao_data['OperatorFlagCode']) not in excludeOperatorList:
+      if (icao_response.status_code == 200 ):
+          if str(icao_data['OperatorFlagCode']) not in excludeOperatorList:
 
-        knownPlane= "False"
-        if(len(aircraftSession) > 0):
-            #Check if Plane ID Exists
-            if( isKnownPlane(str(icaohex))):
-                #Get Plane Item # so we can update them
-                itemNum = returnPlaneIndex(str(icaohex))
-                #Update Plane seen time if current time + 15 min > current time seen value
-                knownPlane= "True"
+              knownPlane= "False"
+              if(len(aircraftSession) > 0):
+                  #Check if Plane ID Exists
+                  if( isKnownPlane(str(icaohex))):
+                      #Get Plane Item # so we can update them
+                      itemNum = returnPlaneIndex(str(icaohex))
+                      #Update Plane seen time if current time + 15 min > current time seen value
+                      knownPlane= "True"
+                    
+                  else:
+                      #Add Plane
+                      addAircraft(str(icaohex))
+                      itemNum = len(aircraftSession)-1
                 
-            else:
-                #Add Plane
-                addAircraft(str(icaohex))
-                itemNum = len(aircraftSession)-1
-               
-        else:
-            #Add Plane
-            addAircraft(str(icaohex))
-            itemNum = len(aircraftSession)-1
+              else:
+                  #Add Plane
+                  addAircraft(str(icaohex))
+                  itemNum = len(aircraftSession)-1
+            
         
-     
-     
-        cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/Aircraft -u me -P me -m "' + str(len(aircraftSession)) + '"'
-        os.system(cmd)  
+        
+              cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/Aircraft -u me -P me -m "' + str(len(aircraftSession)) + '"'
+              os.system(cmd)  
 
-        outcolor="white"
-        minutes = 0 
-        if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
-            outcolor="green"
-            timeSince = datetime.datetime.now() - aircraftSession[itemNum].get_AlertTime() 
-            minutes = timeSince.total_seconds() / 60
-            if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
-               outcolor="yellow" 
-               localtimeComputer = datetime.datetime.now()
-               aircraftSession[itemNum].set_AlertTime(localtimeComputer)
-               mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
-               localtime = time.asctime( time.localtime(time.time()) )
-               mqout2 = localtime  + " " + str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
-               cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "' + mqout + '"'
-               os.system(cmd)
-               cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchforLong -u me -P me -m "' + mqout2 + '"'
-               os.system(cmd) 
-               alertCount  += 1
-               cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/alerts -u me -P me -m "' + str(alertCount) + '"'
-               os.system(cmd)         
+              outcolor="white"
+              minutes = 0 
+              if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
+                  outcolor="green"
+                  timeSince = datetime.datetime.now() - aircraftSession[itemNum].get_AlertTime() 
+                  minutes = timeSince.total_seconds() / 60
+                  if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
+                    outcolor="yellow" 
+                    localtimeComputer = datetime.datetime.now()
+                    aircraftSession[itemNum].set_AlertTime(localtimeComputer)
+                    mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
+                    localtime = time.asctime( time.localtime(time.time()) )
+                    mqout2 = localtime  + " " + str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
+                    cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "' + mqout + '"'
+                    os.system(cmd)
+                    cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchforLong -u me -P me -m "' + mqout2 + '"'
+                    os.system(cmd) 
+                    alertCount  += 1
+                    cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/alerts -u me -P me -m "' + str(alertCount) + '"'
+                    os.system(cmd)         
 
 
-        outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type()) 
-        #print(str(aircraftSession[len(aircraftSession)-1].get_WhenSeen()) )
-        #outLine=str(localtime) +" | " + str(icaohex)+ " | "+ str(icao_data['Registration'])+ " | "+ str(icao_data['ICAOTypeCode'])+ " | "+ str(icao_data['OperatorFlagCode'])+ " | "+ str(icao_data['RegisteredOwners'])+ " | "+ str(icao_data['Type'])
-        print(colored(outLine, outcolor))    
-   else:
+              outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type()) 
+             #print(str(aircraftSession[len(aircraftSession)-1].get_WhenSeen()) )
+             #outLine=str(localtime) +" | " + str(icaohex)+ " | "+ str(icao_data['Registration'])+ " | "+ str(icao_data['ICAOTypeCode'])+ " | "+ str(icao_data['OperatorFlagCode'])+ " | "+ str(icao_data['RegisteredOwners'])+ " | "+ str(icao_data['Type'])
+              print(colored(outLine, outcolor))    
+      else:
+        noHitSession.append(icaohex)
         nohit += 1 
         cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/nohit -u me -P me -m "' + icaohex + " " + str(nohit) +'"'
         os.system(cmd)  
-
+   
 
    i += 1
 
 
 # dealing with time   https://thispointer.com/how-to-add-minutes-to-datetime-in-python/
-
 
