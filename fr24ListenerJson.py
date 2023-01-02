@@ -176,7 +176,7 @@ sampling_period =60
 sampling_period_seconds = int(sampling_period)
 
 excludeOperatorList="AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,AAY,ASH,DAL,ENY,NKS,VOI,JBU,WSW"
-watchlistOwner= ["United States", "Orah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Flying Museum", "Google", "Apple"]
+watchlistOwner= ["United States", "Orah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Flying Museum", "Google", "Apple", "Penske"]
 watchReg="N44SF,N812LE,N353P"
 watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1"
 
@@ -292,3 +292,5 @@ while True:
 
 # dealing with time   https://thispointer.com/how-to-add-minutes-to-datetime-in-python/
 
+# https://globe.adsbexchange.com/?icao=aa8ef0
+# aa43ee | N7600P | SAS Institute Inc | F9EX | Falcon 900EX EASy    z
