@@ -193,7 +193,7 @@ nohit=0
 # grab aircraft.json from the reciever
 
 receiver_url ='http://192.168.0.116'
-
+adsbExchangeBase = 'https://globe.adsbexchange.com/?icao='
 while True:
 
   #r = requests.get(f'{receiver_url}/dump1090/{getIt}')
@@ -253,6 +253,8 @@ while True:
         
               cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/Aircraft -u me -P me -m "' + str(len(aircraftSession)) + '"'
               os.system(cmd)  
+              
+              adsbExchangeBaseFull = adsbExchangeBase + str(icaohex) 
 
               outcolor="white"
               minutes = 0 
@@ -264,9 +266,9 @@ while True:
                     outcolor="yellow" 
                     localtimeComputer = datetime.datetime.now()
                     aircraftSession[itemNum].set_AlertTime(localtimeComputer)
-                    mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
+                    mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type() +"  " + adsbExchangeBaseFull) 
                     localtime = time.asctime( time.localtime(time.time()) )
-                    mqout2 = localtime  + " " + str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
+                    mqout2 = localtime  + " " + str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type() +"  " + adsbExchangeBaseFull) 
                     cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "' + mqout + '"'
                     os.system(cmd)
                     cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchforLong -u me -P me -m "' + mqout2 + '"'
@@ -275,8 +277,8 @@ while True:
                     cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/alerts -u me -P me -m "' + str(alertCount) + '"'
                     os.system(cmd)         
 
-
-              outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type()) 
+              
+              outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " + adsbExchangeBaseFull) 
              #print(str(aircraftSession[len(aircraftSession)-1].get_WhenSeen()) )
              #outLine=str(localtime) +" | " + str(icaohex)+ " | "+ str(icao_data['Registration'])+ " | "+ str(icao_data['ICAOTypeCode'])+ " | "+ str(icao_data['OperatorFlagCode'])+ " | "+ str(icao_data['RegisteredOwners'])+ " | "+ str(icao_data['Type'])
               print(colored(outLine, outcolor))    
