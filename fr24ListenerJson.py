@@ -19,7 +19,7 @@ class Aircraft:
     aircraftRegistration = ""
     aircraftType = ""
     aircraftWhenSeen = ""
-    ircraftWhenSeenCompter = ""
+    aircraftWhenSeenComputer = ""
     AlertTime = ""
 
     def __init__(self, aircraftID):
