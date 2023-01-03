@@ -8,7 +8,31 @@ import requests
 from termcolor import colored
 
 
+class noHit:
+    "noHit ICAO DB "
+    noHitID = ""
+    noHitWhenSeen = ""
+    noHitWhenSeenComputer = ""
 
+
+
+    def __init__(self, aircraftID):
+        self.noHitID = aircraftID
+
+    def get_noHitID(self):
+        return self.noHitID
+
+    def set_noHitWhenSeen(self, aWhenSeen):
+        self.noHitWhenSeen = aWhenSeen
+
+    def get_noHitWhenSeen(self):
+        return self.noHitWhenSeen
+
+    def set_noHitWhenSeenComputer(self, aWhenSeenComputer):
+        self.noHitWhenSeenComputer = aWhenSeenComputer
+
+    def get_noHitWhenSeenComputer(self):
+        return self.noHitWhenSeenComputer        
 
 
 class Aircraft:
@@ -102,6 +126,13 @@ def isKnownNoHitCheck(aircraftID):
     return False
 
 
+def addNoHit(aircraftID):
+    p = noHit(str(aircraftID))
+    localtime = time.asctime( time.localtime(time.time()) )
+    localtimeComputer = datetime.datetime.now()
+    p.set_noHitWhenSeen(str(localtime))
+    p.set_noHitWhenSeenComputer(localtimeComputer)
+    noHitSession.append(p)
 
 def addAircraft(aircraftID):
 
@@ -181,6 +212,7 @@ watchReg="N44SF,N812LE,N353P"
 watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1"
 
 global aircraftSession
+global noHitSession
 global icao_data
 global icao_response
 
