@@ -6,6 +6,9 @@ import time
 import datetime
 import requests
 from termcolor import colored
+import sqlite3
+from sqlite3 import Error
+
 
 
 class noHit:
@@ -199,7 +202,47 @@ def interestingAircraft():
     else:
         return False
 
+##-----------------------------------------------------------------------------------------------------------------------------###
+## this is DB interaction code
 
+
+
+
+
+def create_connection(db_file):
+  
+    conn = None
+    try:
+        conn = sqlite3.connect(db_file)
+    except Error as e:
+        print(e)
+
+    return conn
+
+def isKnownPlaneDB(conn, aircraftID):
+
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM AIRCRAFT WHERE AIRCRAFTID=?", (aircraftID,))
+
+    rows = cur.fetchall()
+
+    for row in rows:
+        print(row)
+        return True
+    return False    
+
+
+
+
+
+
+
+
+
+
+
+
+##-----------------------------------------------------------------------------------------------------------------------------###
 ### mainline
 
 sampling_period =60
@@ -207,7 +250,7 @@ sampling_period =60
 sampling_period_seconds = int(sampling_period)
 
 excludeOperatorList="AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,AAY,ASH,DAL,ENY,NKS,VOI,JBU,WSW"
-watchlistOwner= ["United States", "Orah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Flying Museum", "Google", "Apple", "Penske"]
+watchlistOwner= ["United States", "Orah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Museum", "Google", "Apple", "Penske"]
 watchReg="N44SF,N812LE,N353P"
 watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1"
 
@@ -222,6 +265,14 @@ noHitSession = []
 interestingAircraftCount = 0
 alertCount = 0 
 nohit=0
+
+database = "aircraftMon.db"
+
+# create a database connection
+conn = create_connection(database)
+
+
+
 # grab aircraft.json from the reciever
 
 receiver_url ='http://192.168.0.116'
@@ -275,6 +326,7 @@ while True:
                       #Add Plane
                       addAircraft(str(icaohex))
                       itemNum = len(aircraftSession)-1
+                      isKnownPlaneDB(conn, str(icaohex))
                 
               else:
                   #Add Plane
@@ -298,11 +350,7 @@ while True:
                     outcolor="yellow" 
                     localtimeComputer = datetime.datetime.now()
                     aircraftSession[itemNum].set_AlertTime(localtimeComputer)
-<<<<<<< HEAD
-                    mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type())
-=======
                     mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type() +"  " + adsbExchangeBaseFull) 
->>>>>>> 4b6221c2d17075bc8f336bd99e7092ead63863cc
                     localtime = time.asctime( time.localtime(time.time()) )
                     mqout2 = localtime  + " " + str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type() +"  " + adsbExchangeBaseFull) 
                     cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "' + mqout + '"'
