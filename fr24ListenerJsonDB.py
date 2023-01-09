@@ -239,13 +239,27 @@ def isKnownPlaneDB(aircraftID):
     cur.close 
 
     for row in rows:
-        print(row)
+        #print(row)
         return True
     return False    
     
     
 
+def addIfNewNoHit(aircraftID):
+    database = "aircraftMon.db" 
 
+# create a database connection
+    conn = create_connection(database)
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM NOHITAIRCRAFT WHERE AIRCRAFTID=?;", (aircraftID,))
+
+    rows = cur.fetchall()
+    cur.close 
+
+    for row in rows:
+        #print(row)
+        return True
+    return False        
 
 
 
@@ -264,9 +278,9 @@ sampling_period =60
 sampling_period_seconds = int(sampling_period)
 
 excludeOperatorList="AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,AAY,ASH,DAL,ENY,NKS,VOI,JBU,WSW"
-watchlistOwner= ["United States", "Orah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Museum", "Google", "Apple", "Penske"]
+watchlistOwner= ["United States", "Orah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Museum", "Google", "Apple", "Penske" , "Cardinals"]
 watchReg="N44SF,N812LE,N353P"
-watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1,UPS,FDX"
+watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1,CKS,L1P,T6"
 
 global aircraftSession
 global noHitSession
@@ -283,7 +297,7 @@ nohit=0
 
 
 
-
+#wwII trainer no hit examole https://globe.adsbexchange.com/?icao=a2d458
 
 # grab aircraft.json from the reciever
 
@@ -358,6 +372,15 @@ while True:
                   outcolor="green"
                   timeSince = datetime.datetime.now() - aircraftSession[itemNum].get_AlertTime() 
                   minutes = timeSince.total_seconds() / 60
+                  if ( not isKnownPlaneDB(str(icaohex))):
+                    database = "aircraftMon.db" 
+                    conn = create_connection(database)
+                    cur = conn.cursor()
+                    epochTime = time.time() 
+                    cur.execute("INSERT INTO AIRCRAFT VALUES(?,?,?,?,?,?);",(icaohex, owners, strICAO, strReg, strType, epochTime ))
+                    #cur.execute("INSERT INTO AIRCRAFT VALUES('icaohex2','2','3','4','5', 6);")
+                    cur = conn.commit
+                    cur = conn.close                  
                   if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
                     outcolor="yellow" 
                     localtimeComputer = datetime.datetime.now()
@@ -372,15 +395,15 @@ while True:
                     alertCount  += 1
                     cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/alerts -u me -P me -m "' + str(alertCount) + '"'
                     os.system(cmd) 
-                    if (not knownPlane):
-                        database = "aircraftMon.db" 
-                        conn = create_connection(database)
-                        cur = conn.cursor()
-                        epochTime = time.time() 
-                        cur.execute("INSERT INTO AIRCRAFT VALUES(?,?,?,?,?,?);",(icaohex, owners, strICAO, strReg, strType, epochTime ))
-                        #cur.execute("INSERT INTO AIRCRAFT VALUES('icaohex2','2','3','4','5', 6);")
-                        cur = conn.commit
-                        cur = conn.close
+                    database = "aircraftMon.db" 
+                    conn = create_connection(database)
+                    cur = conn.cursor()
+                    epochTime = time.time() 
+                    cur.execute("INSERT INTO AIRCRAFTSIGHTINGS VALUES(?,?);",(icaohex,epochTime ))
+                    #cur.execute("INSERT INTO AIRCRAFT VALUES('icaohex2','2','3','4','5', 6);")
+                    cur = conn.commit
+                    cur = conn.close             
+              
               outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " + adsbExchangeBaseFull) 
              #print(str(aircraftSession[len(aircraftSession)-1].get_WhenSeen()) )
              #outLine=str(localtime) +" | " + str(icaohex)+ " | "+ str(icao_data['Registration'])+ " | "+ str(icao_data['ICAOTypeCode'])+ " | "+ str(icao_data['OperatorFlagCode'])+ " | "+ str(icao_data['RegisteredOwners'])+ " | "+ str(icao_data['Type'])
@@ -390,7 +413,19 @@ while True:
         noHitSession.append(icaohex)
         nohit += 1 
         cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/nohit -u me -P me -m "' + icaohex + " " + str(nohit) +'"'
-        os.system(cmd)  
+        os.system(cmd) 
+        if (not addIfNewNoHit(icaohex)):
+            
+            database = "aircraftMon.db" 
+            conn1 = create_connection(database)
+            cur1 = conn1.cursor()
+            epochTime = time.time() 
+            #cur1.execute("INSERT INTO NOHITAIRCRAFT VALUES(?);",(icaohex))
+            cur1.execute("INSERT INTO NOHITAIRCRAFT VALUES(?,?);",(icaohex,epochTime ))
+            #cur1.execute("INSERT INTO A NOHITAIRCRAFT VALUES(?,?);",(icaohex,epochTime ))
+           # cur1.execute("INSERT INTO NOHITAIRCRAFT VALUES('icaohex2');")
+            cur1 = conn1.commit
+            cur1 = conn1.close  
    
 
    i += 1
