@@ -1,0 +1,58 @@
+DB Notes 
+https://www.tutorialspoint.com/sqlite/sqlite_create_table.htm
+
+
+
+
+create with this command at command line 
+
+sqlite3 aircraftMon.db
+
+
+
+
+sqlite> CREATE TABLE DEPARTMENT(
+   ID INT PRIMARY KEY      NOT NULL,
+   DEPT           CHAR(50) NOT NULL,
+   EMP_ID         INT      NOT NULL
+);
+
+
+CREATE TABLE AIRCRAFT(
+    AIRCRAFTID TEXT PRIMARY KEY NOT NULL,
+    AIRCRAFTOWNER TEXT KEY NOT NULL,
+    AIRCRAFTOPERATORFLAGCODE TEXT NOT NULL,
+    AIRCRAFTREGISTRATION TEXT NOT NULL,
+    AIRCRAFTTYPE TEXT NOT NULL,
+    AIRCRAFTFIRSTSEENEPOCH INT NOT NULL
+);
+
+INSERT INTO AIRCRAFT VAULES (str(aircraftID), str(icao_data['RegisteredOwners']), str(icao_data['OperatorFlagCode']), \
+str(icao_data['Registration']), str(icao_data['Type']), localtimeComputer )
+
+        p = Aircraft(str(aircraftID))
+        p.set_Registration(str(icao_data['Registration']))
+        p.set_OperatorFlagCode(str(icao_data['OperatorFlagCode']))
+        p.set_Type(str(icao_data['Type']))
+        p.set_Owner(str(icao_data['RegisteredOwners']))
+        localtime = time.asctime( time.localtime(time.time()) )
+        localtimeComputer = datetime.datetime.now()
+        p.set_WhenSeen(str(localtime))
+        p.set_WhenSeenComputer(localtimeComputer)
+
+        if (interestingAircraft()):
+            p.set_Interesting("True")
+            p.set_AlertTime(localtimeComputer)
+
+        else:
+            p.set_Interesting("False")
+
+CREATE TABLE AIRCRAFTSIGHTINGS(
+    AIRCRAFTSIGHTINGID TEXT PRIMARY KEY NOT NULL,
+    AIRCRAFTSIGHTINGEPOCH INT NOT NULL
+);
+
+
+CREATE TABLE NOHITAIRCRAFT(
+    NOHITAIRCRAFTID TEXT PRIMARY KEY NOT NULL
+);

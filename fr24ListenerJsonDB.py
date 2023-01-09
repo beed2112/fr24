@@ -82,8 +82,7 @@ class Aircraft:
     def set_WhenSeen(self, aWhenSeen):
         self.aircraftWhenSeen = aWhenSeen
 
-    def get_WhenSeen(self):
-        return self.aircraftWhenSeen
+    def get_WhenSeen(self):        return self.aircraftWhenSeen
 
     def set_WhenSeenComputer(self, aWhenSeenComputer):
         self.aircraftWhenSeenComputer = aWhenSeenComputer
@@ -143,7 +142,11 @@ def addAircraft(aircraftID):
     global icaoData
     global localtime
     global interestingAircraftCount 
-
+    global strICAO 
+    global strReg 
+    global strType
+    global strAircraftID 
+    global owners
 #    icao_response = requests.get(f'https://hexdb.io/api/v1/aircraft/{aircraftID}')
 
 #    icao_data = icao_response.json()
@@ -154,6 +157,8 @@ def addAircraft(aircraftID):
         owners=icao_data['RegisteredOwners']
         strICAO = str(icao_data['OperatorFlagCode'])
         strReg = str(icao_data['Registration'])
+        strType =str(icao_data['Type'])
+        strAircraftID = str(aircraftID)
         p = Aircraft(str(aircraftID))
         p.set_Registration(str(icao_data['Registration']))
         p.set_OperatorFlagCode(str(icao_data['OperatorFlagCode']))
@@ -164,15 +169,18 @@ def addAircraft(aircraftID):
         p.set_WhenSeen(str(localtime))
         p.set_WhenSeenComputer(localtimeComputer)
 
+
+  
         if (interestingAircraft()):
             p.set_Interesting("True")
             p.set_AlertTime(localtimeComputer)
+         
 
         else:
             p.set_Interesting("False")
 
         aircraftSession.append(p)
-            
+ 
 #    return
 
 def interestingAircraft():
@@ -213,23 +221,29 @@ def create_connection(db_file):
   
     conn = None
     try:
-        conn = sqlite3.connect(db_file)
+        conn = sqlite3.connect(db_file , isolation_level = None)
     except Error as e:
         print(e)
 
     return conn
 
-def isKnownPlaneDB(conn, aircraftID):
+def isKnownPlaneDB(aircraftID):
+    database = "aircraftMon.db" 
 
+# create a database connection
+    conn = create_connection(database)
     cur = conn.cursor()
-    cur.execute("SELECT * FROM AIRCRAFT WHERE AIRCRAFTID=?", (aircraftID,))
+    cur.execute("SELECT * FROM AIRCRAFT WHERE AIRCRAFTID=?;", (aircraftID,))
 
     rows = cur.fetchall()
+    cur.close 
 
     for row in rows:
         print(row)
         return True
     return False    
+    
+    
 
 
 
@@ -252,12 +266,13 @@ sampling_period_seconds = int(sampling_period)
 excludeOperatorList="AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,AAY,ASH,DAL,ENY,NKS,VOI,JBU,WSW"
 watchlistOwner= ["United States", "Orah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Museum", "Google", "Apple", "Penske"]
 watchReg="N44SF,N812LE,N353P"
-watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1"
+watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1,UPS,FDX"
 
 global aircraftSession
 global noHitSession
 global icao_data
 global icao_response
+global icaohex
 
 aircraftSession = []
 noHitSession = []
@@ -266,10 +281,7 @@ interestingAircraftCount = 0
 alertCount = 0 
 nohit=0
 
-database = "aircraftMon.db"
 
-# create a database connection
-conn = create_connection(database)
 
 
 
@@ -326,7 +338,7 @@ while True:
                       #Add Plane
                       addAircraft(str(icaohex))
                       itemNum = len(aircraftSession)-1
-                      isKnownPlaneDB(conn, str(icaohex))
+                      isKnownPlaneDB(str(icaohex))
                 
               else:
                   #Add Plane
@@ -350,7 +362,7 @@ while True:
                     outcolor="yellow" 
                     localtimeComputer = datetime.datetime.now()
                     aircraftSession[itemNum].set_AlertTime(localtimeComputer)
-                    mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type() +"  " + adsbExchangeBaseFull) 
+                    mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
                     localtime = time.asctime( time.localtime(time.time()) )
                     mqout2 = localtime  + " " + str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type() +"  " + adsbExchangeBaseFull) 
                     cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "' + mqout + '"'
@@ -359,13 +371,21 @@ while True:
                     os.system(cmd) 
                     alertCount  += 1
                     cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/alerts -u me -P me -m "' + str(alertCount) + '"'
-                    os.system(cmd)         
-
-              
+                    os.system(cmd) 
+                    if (not knownPlane):
+                        database = "aircraftMon.db" 
+                        conn = create_connection(database)
+                        cur = conn.cursor()
+                        epochTime = time.time() 
+                        cur.execute("INSERT INTO AIRCRAFT VALUES(?,?,?,?,?,?);",(icaohex, owners, strICAO, strReg, strType, epochTime ))
+                        #cur.execute("INSERT INTO AIRCRAFT VALUES('icaohex2','2','3','4','5', 6);")
+                        cur = conn.commit
+                        cur = conn.close
               outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " + adsbExchangeBaseFull) 
              #print(str(aircraftSession[len(aircraftSession)-1].get_WhenSeen()) )
              #outLine=str(localtime) +" | " + str(icaohex)+ " | "+ str(icao_data['Registration'])+ " | "+ str(icao_data['ICAOTypeCode'])+ " | "+ str(icao_data['OperatorFlagCode'])+ " | "+ str(icao_data['RegisteredOwners'])+ " | "+ str(icao_data['Type'])
               print(colored(outLine, outcolor))    
+              
       else:
         noHitSession.append(icaohex)
         nohit += 1 
