@@ -12,8 +12,32 @@ from sqlite3 import Error
 from aircraft import Aircraft
 from nohitAircraft import noHit
 
+# cleanup aged Noaircraft 
+def cleanNoHitAircraft():
+   # global aircraftSession
+    count = 0
+    for p in noHitSession:
+        age = lastCleanupTime - p.noHitWhenSeenComputer
+        ageMinutes = age.total_seconds() / 60
+        if (ageMinutes >  purgeMinutes):
+           # if (p.aircraftID in aircraftSession):
+               noHitSession.pop(count)
+        count += 1    
+    return 
 
-
+ 
+# cleanup aged aircraft 
+def cleanAircraft():
+   # global aircraftSession
+    count = 0
+    for p in aircraftSession:
+        age = lastCleanupTime - p.aircraftWhenSeenComputer
+        ageMinutes = age.total_seconds() / 60
+        if (ageMinutes >  purgeMinutes):
+           # if (p.aircraftID in aircraftSession):
+               aircraftSession.pop(count)
+        count += 1    
+    return 
 
 #check Object to see if aircraft has been seen this session
 def isKnownPlane(aircraftID):
@@ -245,7 +269,8 @@ global icao_data
 global icao_response
 global icaohex
 global database
-
+global purgeMinutes
+global lastCleanupTime
 database = "aircraftMon.db" 
 
 aircraftSession = []
@@ -254,8 +279,8 @@ noHitSession = []
 interestingAircraftCount = 0
 alertCount = 0 
 nohit=0
-
-
+lastCleanupTime = datetime.datetime.now()
+purgeMinutes = 2
 
 #wwII trainer no hit example https://globe.adsbexchange.com/?icao=a2d458
 
@@ -358,7 +383,8 @@ while True:
               print(colored(outLine, outcolor))    
               
       else:
-        noHitSession.append(icaohex)
+        #noHitSession.append(icaohex)
+        addNoHit(icaohex)
         nohit += 1 
         cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/nohit -u me -P me -m "' + icaohex + " " + str(nohit) +'"'
         os.system(cmd) 
@@ -366,7 +392,19 @@ while True:
 
 
    
+   timeSinceLastCleanup = datetime.datetime.now() - lastCleanupTime
+   minutesSinceLastCleanup  = timeSinceLastCleanup.total_seconds() / 60
 
+   if (minutesSinceLastCleanup > purgeMinutes):
+       cleanAircraft()
+       cleanNoHitAircraft()
+       lastCleanupTime = datetime.datetime.now()
+
+ 
+ 
+ 
+ 
+ 
    i += 1
 
 
