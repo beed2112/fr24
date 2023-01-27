@@ -307,6 +307,9 @@ while go == 0 :
   #r = requests.get(f'{receiver_url}/dump1090/{getIt}')
   r = requests.get(f'{receiver_url}/dump1090/data/aircraft.json')
 
+  #readsb version location 
+  r = requests.get(f'{receiver_url}/aircraft.json')
+
   if r.status_code != 200:
     raise ValueError(f'ERROR: getting aircraft json data :{r.text}')
 
