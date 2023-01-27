@@ -62,7 +62,7 @@ def returnPlaneIndex(aircraftID):
     global aircraftSession
     count = 0
     for p in aircraftSession:
-        if( p.aircraftID == aircraftID): you can play any text on any supported media player!
+        if( p.aircraftID == aircraftID):
             return count
         count = count + 1
     return -1 
@@ -299,7 +299,7 @@ purgeMinutesNoHit = 15
 
 # grab aircraft.json from the reciever
 
-receiver_url ='http://192.168.0.116'
+receiver_url ='http://localhost'
 adsbExchangeBase = 'https://globe.adsbexchange.com/?icao='
 go = 0 
 while go == 0 :
