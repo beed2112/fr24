@@ -173,8 +173,6 @@ def interestingAircraft():
 
     if interestCount > 0:
        interestingAircraftCount  += 1
-       cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/interestingAircraft -u me -P me -m "' + str(interestingAircraftCount) + '"'
-       os.system(cmd) 
        return True
        
     else:
@@ -362,8 +360,6 @@ while go == 0 :
             
         
         
-              cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/Aircraft -u me -P me -m "' + str(len(aircraftSession)) + '"'
-              os.system(cmd)  
               
               adsbExchangeBaseFull = adsbExchangeBase + str(icaohex) 
 
@@ -378,16 +374,6 @@ while go == 0 :
                     outcolor="yellow" 
                     localtimeComputer = datetime.datetime.now()
                     aircraftSession[itemNum].set_AlertTime(localtimeComputer)
-                    mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
-                    localtime = time.asctime( time.localtime(time.time()) )
-                    mqout2 = localtime  + " " + str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type() +"  " + adsbExchangeBaseFull) 
-                    cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "' + mqout + '"'
-                    os.system(cmd)
-                    cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchforLong -u me -P me -m "' + mqout2 + '"'
-                    os.system(cmd) 
-                    alertCount  += 1
-                    cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/alerts -u me -P me -m "' + str(alertCount) + '"'
-                    os.system(cmd) 
                     conn = create_connection(database)
                     cur = conn.cursor()
                     epochTime = time.time() 
@@ -402,8 +388,6 @@ while go == 0 :
         #noHitSession.append(icaohex)
         addNoHit(icaohex)
         nohit += 1 
-        cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/nohit -u me -P me -m "' + icaohex + " " + str(nohit) +'"'
-        os.system(cmd) 
         addIfNewNoHit(icaohex)
 
 
