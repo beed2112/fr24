@@ -417,11 +417,7 @@ while go == 0 :
    myHour =  myobj.hour
    myMinute = myobj.minute
 
-   if (myHour == 4):
-       if (myMinute == 20):
-          print("exitting program")
-          go =5
-          x = requests.get(f'https://foobar.foo')
+
            
 
 
