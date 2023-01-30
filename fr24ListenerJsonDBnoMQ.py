@@ -129,20 +129,19 @@ def addAircraft(aircraftID):
         p.set_WhenSeen(str(localtime))
         p.set_WhenSeenComputer(localtimeComputer)
 
-
-  
+       # this version is being used on a mobil experiment... we want to log all planes we see so we can look into later 
+       #add the aircraft to the database
+        addAircraftDB(aircraftID)
+        conn = create_connection(database)
+        cur = conn.cursor()
+        epochTime = time.time() 
+        cur.execute("INSERT INTO AIRCRAFTSIGHTINGS VALUES(?,?);",(icaohex,epochTime ))
+        cur = conn.commit
+        cur = conn.close  
+         
         if (interestingAircraft()):
             p.set_Interesting("True")
             p.set_AlertTime(localtimeComputer)
-            #add the aircraft to the database
-            #add a seen record
-            addAircraftDB(aircraftID)  
-            conn = create_connection(database)
-            cur = conn.cursor()
-            epochTime = time.time() 
-            cur.execute("INSERT INTO AIRCRAFTSIGHTINGS VALUES(?,?);",(icaohex,epochTime ))
-            cur = conn.commit
-            cur = conn.close 
         else:
             p.set_Interesting("False")
             addIfNewNotInterestinig(aircraftID)
@@ -266,9 +265,13 @@ sampling_period =60
 
 sampling_period_seconds = int(sampling_period)
 
-excludeOperatorList="AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,AAY,ASH,DAL,ENY,NKS,VOI,JBU,WSW"
-watchlistOwner= ["Federal", "United States", "Oprah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Museum", "Google", "Apple", "Penske" , "Cardinals"]
+#excludeOperatorList="AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,AAY,ASH,DAL,ENY,NKS,VOI,JBU,WSW"
+excludeOperatorList=" "
+
+watchlistOwner= ["India","Federal", "United States", "Oprah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Museum", "Google", "Apple", "Penske" , "Cardinals"]
+
 watchReg="N44SF,N812LE,N353P,N781MM,N88WR,N383LS,N78HV"
+
 watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1,CKS,L1P,T6,BGR"
 
 global aircraftSession
@@ -281,7 +284,7 @@ global purgeMinutesAircraft
 global lastCleanupTimeAircraft
 global purgeMinutesNoHit
 global lastCleanupTimeNoHit
-database = "aircraftMon.db" 
+database = "aircraft/aircraftMon.db" 
 
 aircraftSession = []
 noHitSession = []
