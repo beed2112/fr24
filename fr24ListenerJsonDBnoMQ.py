@@ -394,7 +394,7 @@ while go == 0 :
         #noHitSession.append(icaohex)
         addNoHit(icaohex)
         outcolor = "blue"
-        outLine = time.asctime(time.localtime(time.time()))+ " | " + str(icaohex) ) 
+        outLine = time.asctime(time.localtime(time.time()))+ " | " + str(icaohex)
         print(colored(outLine, outcolor))   
         nohit += 1 
         addIfNewNoHit(icaohex)
