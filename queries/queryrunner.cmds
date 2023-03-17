@@ -1,0 +1,6 @@
+.mode html
+.headers on
+output aricraftInterestingLast24.html
+.read /home/beed2112/fr24/queries/interstingLast24.sql
+output aricraftNotInterestingLast24.html
+.read /home/beed2112/fr24/queries/notInterstingLast24.sql

@@ -1,0 +1,2 @@
+select AIRCRAFTOWNER, AIRCRAFTREGISTRATION, datetime(AIRCRAFTFIRSTSEENEPOCH, 'unixepoch', 'localtime') as Seen, date(AIRCRAFTFIRSTSEENEPOCH, 'unixepoch', 'localtime') as Seendate, 
+datetime('now' ,  'localtime', '-24 hours') as qdate from   AIRCRAFTNOTINTERESTING where Seen >= qdate order by  AIRCRAFTOWNER;

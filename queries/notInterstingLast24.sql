@@ -1,0 +1,2 @@
+select date(AIRCRAFTFIRSTSEENEPOCH, 'unixepoch', 'localtime') as Seendate, AIRCRAFTOWNER, AIRCRAFTREGISTRATION, AIRCRAFTID
+ from   AIRCRAFTNOTINTERESTING where datetime(AIRCRAFTFIRSTSEENEPOCH, 'unixepoch', 'localtime')  >= datetime('now' ,  'localtime', '-24 hours') order by  AIRCRAFTOWNER;

@@ -1,0 +1,3 @@
+.read /home/beed2112/fr24/queries/interstingLast24.sql
+.read /home/beed2112/fr24/queries/notInterstingLast24.sql
+.exit
