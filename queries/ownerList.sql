@@ -39,33 +39,40 @@ Private|T-6G Texan|N260CF|a27f35 "Some Dude's old cool plane"
                                       
 AIRCRAFTID - Begins with A for stuff from USA
  so non usa stuff 
- 
-select  DISTINCT AIRCRAFT.AIRCRAFTID, AIRCRAFTOWNER from AIRCRAFT where AIRCRAFTID not like 'a%' order by AIRCRAFT.AIRCRAFTOWNER;
-3fb950|German Air Force
-3ebd41|German Air Force
-3f6931|German Air Force
-33fe7d|Italian Air Force
-c02682|Ontario Provincial Police
-43c009|Royal Air Force
-43c5e3|Royal Air Force
-43c171|Royal Air Force
-43c6f4|Royal Air Force
-7cf9c4|Royal Australian Air Force
-7cf9c5|Royal Australian Air Force
-7cf864|Royal Australian Air Force
-7cfa71|Royal Australian Air Force
-c2af81|Royal Canadian Air Force
-c2b571|Royal Canadian Air Force
-c2b58f|Royal Canadian Air Force
-c2b049|Royal Canadian Air Force
-c2b0ad|Royal Canadian Air Force
-c2b369|Royal Canadian Air Force
-c2b567|Royal Canadian Air Force
-896c3e|United Arab Emirates Air Force
-896c2f|United Arab Emirates Air Force
+
+date(AIRCRAFTFIRSTSEENEPOCH, 'unixepoch', 'localtime') as Seendate
+intteresting
+
+select  DISTINCT AIRCRAFT.AIRCRAFTID, AIRCRAFTOWNER, date(AIRCRAFTFIRSTSEENEPOCH, 'unixepoch', 'localtime') as Seendate from AIRCRAFT where AIRCRAFTID not like 'a%' order by AIRCRAFT.AIRCRAFTOWNER;
+
+
+3fb950|German Air Force|2023-02-09
+3ebd41|German Air Force|2023-03-04
+3f6931|German Air Force|2023-03-10
+33fe7d|Italian Air Force|2023-02-16
+c02682|Ontario Provincial Police|2023-03-04
+43c009|Royal Air Force|2023-01-27
+43c5e3|Royal Air Force|2023-02-12
+43c171|Royal Air Force|2023-02-19
+43c6f4|Royal Air Force|2023-03-09
+7cf9c4|Royal Australian Air Force|2023-01-19
+7cf9c5|Royal Australian Air Force|2023-02-03
+7cf864|Royal Australian Air Force|2023-02-04
+7cfa71|Royal Australian Air Force|2023-03-05
+c2af81|Royal Canadian Air Force|2023-01-26
+c2b571|Royal Canadian Air Force|2023-02-06
+c2b58f|Royal Canadian Air Force|2023-02-06
+c2b049|Royal Canadian Air Force|2023-02-17
+c2b0ad|Royal Canadian Air Force|2023-02-17
+c2b369|Royal Canadian Air Force|2023-03-07
+c2b567|Royal Canadian Air Force|2023-03-14
+896c3e|United Arab Emirates Air Force|2023-01-29
+896c2f|United Arab Emirates Air Force|2023-03-03
 
 
 
+Not interesting
 
+select  DISTINCT AIRCRAFTID, AIRCRAFTOWNER, date(AIRCRAFTFIRSTSEENEPOCH, 'unixepoch', 'localtime') as Seendate from AIRCRAFTNOTINTERESTING where AIRCRAFTID not like 'a%' order by AIRCRAFTID;
 
                                       
