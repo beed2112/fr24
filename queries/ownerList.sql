@@ -37,4 +37,35 @@ Private|Stearman E75N1 PT-13D Kaydet|N1315N|a081fc "Some Dude's old cool bi plan
 Private|T-6G Texan|N153NA|a0d681 "Some Dude's old cool plane" 
 Private|T-6G Texan|N260CF|a27f35 "Some Dude's old cool plane" 
                                       
+AIRCRAFTID - Begins with A for stuff from USA
+ so non usa stuff 
+ 
+select  DISTINCT AIRCRAFT.AIRCRAFTID, AIRCRAFTOWNER from AIRCRAFT where AIRCRAFTID not like 'a%' order by AIRCRAFT.AIRCRAFTOWNER;
+3fb950|German Air Force
+3ebd41|German Air Force
+3f6931|German Air Force
+33fe7d|Italian Air Force
+c02682|Ontario Provincial Police
+43c009|Royal Air Force
+43c5e3|Royal Air Force
+43c171|Royal Air Force
+43c6f4|Royal Air Force
+7cf9c4|Royal Australian Air Force
+7cf9c5|Royal Australian Air Force
+7cf864|Royal Australian Air Force
+7cfa71|Royal Australian Air Force
+c2af81|Royal Canadian Air Force
+c2b571|Royal Canadian Air Force
+c2b58f|Royal Canadian Air Force
+c2b049|Royal Canadian Air Force
+c2b0ad|Royal Canadian Air Force
+c2b369|Royal Canadian Air Force
+c2b567|Royal Canadian Air Force
+896c3e|United Arab Emirates Air Force
+896c2f|United Arab Emirates Air Force
+
+
+
+
+
                                       
