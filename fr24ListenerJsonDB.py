@@ -17,6 +17,7 @@ def cleanNoHitAircraft():
    # global aircraftSession
     count = 0
     removed = 0
+    kept = 0 
     for p in noHitSession:
         age = lastCleanupTimeAircraft - p.noHitWhenSeenComputer
         ageMinutes = age.total_seconds() / 60
@@ -24,10 +25,14 @@ def cleanNoHitAircraft():
            # if (p.aircraftID in aircraftSession):
                noHitSession.pop(count)
                removed +=1
+        else:  
+           kept += 1
         count += 1    
     outLine = " ----------> " + time.asctime(time.localtime(time.time()))+ " Removed NoHit Aircraft " +  str(removed)
     outcolor = "blue"
     print(colored(outLine, outcolor))
+    outLine = " ----------> " + time.asctime(time.localtime(time.time()))+ "      Kept NoHit Aircraft " +  str(kept)  
+    print(colored(outLine, outcolor))  
     return 
 
  
@@ -36,17 +41,22 @@ def cleanAircraft():
    # global aircraftSession
     count = 0
     removed = 0 
-    for p in aircraftSession:
+    kept = 0 
+    for p in aircraftSession:    
         age = lastCleanupTimeNoHit - p.aircraftWhenSeenComputer
         ageMinutes = age.total_seconds() / 60
         if (ageMinutes >  purgeMinutesAircraft):
            # if (p.aircraftID in aircraftSession):
                aircraftSession.pop(count)
                removed +=1
+        else:
+           kept +=1  
         count += 1  
     outLine = " ----------> " + time.asctime(time.localtime(time.time()))+ "      Removed Aircraft " +  str(removed)
     outcolor = "blue"
-    print(colored(outLine, outcolor))        
+    print(colored(outLine, outcolor))     
+    outLine = " ----------> " + time.asctime(time.localtime(time.time()))+ "     Kept Aircraft " +  str(kept)  
+    print(colored(outLine, outcolor))  
     return 
 
 #check Object to see if aircraft has been seen this session
@@ -62,7 +72,7 @@ def returnPlaneIndex(aircraftID):
     global aircraftSession
     count = 0
     for p in aircraftSession:
-        if( p.aircraftID == aircraftID): you can play any text on any supported media player!
+        if( p.aircraftID == aircraftID): 
             return count
         count = count + 1
     return -1 
@@ -168,6 +178,8 @@ def interestingAircraft():
     if strICAO in watchICAO:
         interestCount += 1
 
+
+
     if strReg in watchReg:
         interestCount += 1        
 
@@ -268,9 +280,11 @@ sampling_period =60
 
 sampling_period_seconds = int(sampling_period)
 
-excludeOperatorList="AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,AAY,ASH,DAL,ENY,NKS,VOI,JBU,WSW"
-watchlistOwner= ["Federal", "United States", "Oprah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Museum", "Google", "Apple", "Penske" , "Cardinals"]
-watchReg="N44SF,N812LE,N353P,N781MM,N88WR,N383LS,N78HV"
+#Sat Feb 25 10:47:07 2023 | Sat Feb 25 10:47:07 2023 | acb004 | N9165H | Private | FA62 | M-62A-3 PT-26 | https://globe.adsbexchange.com/?icao=acb004
+
+excludeOperatorList="LXJ,AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,ASH,DAL,ENY,NKS,VOI,JBU,WSW"
+watchlistOwner= ["Missile Defense Agency","NASCAR", "Motorsports","Federal", "United States", "Oprah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Museum", "Google", "Apple", "Penske" , "Cardinals" , "Stewart-Haas"]
+watchReg="N44SF,N812LE,N353P,N781MM,N88WR,N383LS,N78HV,N4DP,N9165H,N519JG"
 watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1,CKS,L1P,T6,BGR"
 
 global aircraftSession
@@ -283,7 +297,7 @@ global purgeMinutesAircraft
 global lastCleanupTimeAircraft
 global purgeMinutesNoHit
 global lastCleanupTimeNoHit
-database = "aircraftMon.db" 
+database = "/home/beed2112/fr24/aircraftMon.db" 
 
 aircraftSession = []
 noHitSession = []
@@ -295,7 +309,7 @@ lastCleanupTimeAircraft = datetime.datetime.now()
 purgeMinutesAircraft = 180
 
 lastCleanupTimeNoHit = datetime.datetime.now()
-purgeMinutesNoHit = 15
+purgeMinutesNoHit = 8
 
 #wwII trainer no hit example https://globe.adsbexchange.com/?icao=a2d458
 
@@ -305,7 +319,7 @@ receiver_url ='http://192.168.0.116'
 adsbExchangeBase = 'https://globe.adsbexchange.com/?icao='
 go = 0 
 while go == 0 :
-
+  #print ("talk to the pi")
   #r = requests.get(f'{receiver_url}/dump1090/{getIt}')
   r = requests.get(f'{receiver_url}/dump1090/data/aircraft.json')
 
@@ -322,8 +336,15 @@ while go == 0 :
   }
   
   
-  
-  print ("+++-------------------------------------------------------------------------------------------------------------------------------------------------------------+++")
+  part1 = "+++--------------------------------------------------------------------------------------------------------------------------------------------"
+  part2 = time.asctime(time.localtime(time.time()))
+  part3 = str(info_data['aircraft_count'])
+  part4 = str(len(aircraftSession))
+  part5 = str(len(noHitSession))
+  part6 = "----+++"
+
+  outline = part1 + part2 + "--" + part3 + "--" + part4 + "--" + part5 + "--" + part6
+  print (outline)
 
 #loop thru the aircraft 
   i = 00
@@ -334,16 +355,18 @@ while go == 0 :
 
    if ( not isKnownNoHitCheck(icaohex) ):
       knownNoHit = "False" 
+      #print ("talk to the webservice")
       icao_response = requests.get(f'https://hexdb.io/api/v1/aircraft/{icaohex}')
       icao_data = icao_response.json()
 
       if (icao_response.status_code == 200 ):
+          #if str(icao_data['OperatorFlagCode']) not in excludeOperatorList or not ( isKnownPlane(str(icaohex))):  
           if str(icao_data['OperatorFlagCode']) not in excludeOperatorList:
-
               knownPlane= "False"
               if(len(aircraftSession) > 0):
                   #Check if Plane ID Exists
                   if( isKnownPlane(str(icaohex))):
+                  #if str(icao_data['OperatorFlagCode']) not in excludeOperatorList:
                       #Get Plane Item # so we can update them
                       itemNum = returnPlaneIndex(str(icaohex))
                       #Update Plane seen time if current time + 15 min > current time seen value
@@ -378,7 +401,8 @@ while go == 0 :
                     outcolor="yellow" 
                     localtimeComputer = datetime.datetime.now()
                     aircraftSession[itemNum].set_AlertTime(localtimeComputer)
-                    mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
+                    #mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
+                    mqout =  str(aircraftSession[itemNum].get_Owner()) +". " + str(aircraftSession[itemNum].get_Type()) 
                     localtime = time.asctime( time.localtime(time.time()) )
                     mqout2 = localtime  + " " + str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type() +"  " + adsbExchangeBaseFull) 
                     cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "' + mqout + '"'
@@ -412,15 +436,17 @@ while go == 0 :
    minutesSinceLastCleanupAircraft = timeSinceLastCleanupAircraft.total_seconds() / 60
 
    if (minutesSinceLastCleanupAircraft> purgeMinutesAircraft):
-       cleanAircraft()
+       #cleanAircraft()
        lastCleanupTimeAircraft = datetime.datetime.now()
-
+       aircraftSession = []
+       
    timeSinceLastCleanupNohit = datetime.datetime.now() - lastCleanupTimeNoHit
    minutesSinceLastCleanupNohit = timeSinceLastCleanupNohit.total_seconds() / 60
  
    if (minutesSinceLastCleanupNohit > purgeMinutesNoHit):
 
-       cleanNoHitAircraft()
+       #cleanNoHitAircraft()
+       noHitSession = []
        lastCleanupTimeNoHit = datetime.datetime.now()
  
  
