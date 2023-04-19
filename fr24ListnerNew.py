@@ -355,6 +355,9 @@ global icaohex
 global database
 global knownPlane
 global strICAO 
+global localResolve
+global webserviceCalls
+
 database = "aircraftMon.db" 
 
 aircraftSession = []
@@ -364,7 +367,8 @@ interestingAircraftCount = 0
 alertCount = 0 
 nohit=0
 
-
+webserviceCalls = 0 
+localResolve = 0 
 startTime = time.asctime(time.localtime(time.time()))
 
 # grab aircraft.json from the reciever
@@ -375,6 +379,7 @@ while True:
   aircraftCount= 0 
 
   try:
+      webserviceCalls += 1
       r = requests.get(f'{receiver_url}/dump1090/data/aircraft.json', timeout=(5,5))
       if r.status_code != 200:
         raise ValueError(f'ERROR: getting aircraft json data :{r.text}')
@@ -395,11 +400,14 @@ while True:
  
   
   
-  part1 =  "+++---------- Start " + startTime + "----------------------------------------------------------------------------------------------------Current "
+  part1 =  "+++---------- Start " + startTime + "-------------------------------------------------------------------------------Current "
   part2 = time.asctime(time.localtime(time.time()))
   part3 = str(aircraftCount)
+  part4 = "webservice " + str(webserviceCalls)
+  part5 = "local " + str(localResolve)
   part6 = "----+++"
-  outline = part1 + part2 + "--" + part3 + "--"  + part6
+  #outline = part1 + part2 + "--" + part3 + "--" + "--"+ part4 + part5 +  "--"  + part6
+  outline = part1 + part2 + "--" + part3 + "--" + part4 + "--" + part5 +  "--"  + part6
   print (outline)
 
 #loop thru the aircraft 
@@ -414,7 +422,8 @@ while True:
    knownNoHitAircraft = "False"
    knownAircraft = "False"
    if isKnownPlaneDB(icaohex):
-      knownAircraft = "False"
+      knownAircraft = "True"
+      localResolve += 1
       #addAircraft(icaohex)
    else:
        if ( not isKnownNoHitCheck(icaohex) ):
