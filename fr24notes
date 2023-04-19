@@ -63,3 +63,23 @@ MSG,1,1,1,A2D096,1,2022/12/01,03:10:01.971,2022/12/01,03:10:02.818,OXF,,,,,,,,,,
 }
 
 
+alter table AIRCRAFT add AIRCRAFTINTERESTING;
+update AIRCRAFT set AIRCRAFTINTERESTING="True" ;
+
+
+alter table AIRCRAFTNOTINTERESTING add AIRCRAFTINTERESTING;
+update AIRCRAFTNOTINTERESTING set AIRCRAFTINTERESTING="False" ;
+
+
+.headers on
+.mode csv
+.output notinteresting.csv 
+
+select * from AIRCRAFTNOTINTERESTING ;
+
+.import notinteresting.csv AIRCRAFT 
+
+
+
+
+
