@@ -163,7 +163,7 @@ def addAircraft(aircraftID):
         p.set_Interesting("False")
         interesting = "False" 
             
-    if strICAO not in excludeOperatorList or interesting == "True":        
+    if strICAO not in excludeOperatorList:        
             addAircraftDB(aircraftID)  
             conn = create_connection(database)
             cur = conn.cursor()
@@ -342,7 +342,7 @@ sampling_period =60
 
 sampling_period_seconds = int(sampling_period)
 
-excludeOperatorList="LXJ,AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,ASH,DAL,ENY,NKS,VOI,JBU,WSW,UPS,SWQ,ABX,FDX,QXE,SLI,EJA,JZA,ROU,GAJ,FDY,CFS"
+excludeOperatorList="LXJ,AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,ASH,DAL,ENY,NKS,VOI,JBU,WSW,UPS,SWQ,ABX,FDX,QXE,SLI,EJA,JZA,ROU,GAJ,FDY,CFS,NJAS"
 watchlistOwner= ["Missile Defense Agency","NASCAR", "Motorsports","Federal", "United States", "Oprah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Museum", "Google", "Apple", "Penske" , "Cardinals" , "Stewart-Haas"]
 watchReg="N44SF,N812LE,N353P,N781MM,N88WR,N383LS,N78HV,N4DP,N9165H,N519JG,N280NV"
 watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1,L1P,T6,BGR"
@@ -400,7 +400,7 @@ while True:
  
   
   
-  part1 =  "+++---------- Start " + startTime + "-------------------------------------------------------------------------------Current "
+  part1 =  "+++---------- Start " + startTime + "-------------------------------------------------------------Current "
   part2 = time.asctime(time.localtime(time.time()))
   part3 = str(aircraftCount)
   part4 = "webservice " + str(webserviceCalls)
@@ -429,7 +429,7 @@ while True:
        if ( not isKnownNoHitCheck(icaohex) ):
             try:
                knownNoHitAircraft = "True" 
-               icao_response = requests.get(f'https://hexdb.io/api/v1/aircraft/{icaohex}')
+               icao_response = requests.get(f'https://hexdb.io/api/v1/aircraft/{icaohex}', timeout=(5,5))
                icao_data = icao_response.json()
                if (icao_response.status_code == 200 ):
                    strICAO = str(icao_data['OperatorFlagCode'])
