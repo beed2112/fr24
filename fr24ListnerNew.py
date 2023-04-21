@@ -17,9 +17,9 @@ def cleanNoHitAircraft():
    # global aircraftSession
     count = 0
     for p in noHitSession:
-        age = lastCleanupTime - p.noHitWhenSeenComputer
+        age = lastCleanupTimeAircraft - p.noHitWhenSeenComputer
         ageMinutes = age.total_seconds() / 60
-        if (ageMinutes >  purgeMinutes):
+        if (ageMinutes >  purgeMinutesAircraft):
            # if (p.aircraftID in aircraftSession):
                noHitSession.pop(count)
         count += 1    
@@ -31,9 +31,9 @@ def cleanAircraft():
    # global aircraftSession
     count = 0
     for p in aircraftSession:
-        age = lastCleanupTime - p.aircraftWhenSeenComputer
+        age = lastCleanupTimeAircraft - p.aircraftWhenSeenComputer
         ageMinutes = age.total_seconds() / 60
-        if (ageMinutes >  purgeMinutes):
+        if (ageMinutes >  purgeMinutesAircraft):
            # if (p.aircraftID in aircraftSession):
                aircraftSession.pop(count)
         count += 1    
@@ -44,6 +44,14 @@ def isKnownPlane(aircraftID):
     global aircraftSession
     for p in aircraftSession:
         if( p.aircraftID == aircraftID):
+            icaohex =aircraftID 
+            owners = p.aircraftOwner
+            operatorFlagCode = p.aircraftOperatorFlagCode
+            strReg = p.aircraftRegistration
+            strType =p.aircraftType 
+            epochTime =  p.aircraftWhenSeenComputer
+            interesting = p.aircraftInteresting
+            knownPlane = "True"
             return True
     return False
 
@@ -357,6 +365,8 @@ global knownPlane
 global strICAO 
 global localResolve
 global webserviceCalls
+global lastCleanupTimeAircraft
+global purgeMinutesAircraft
 
 database = "aircraftMon.db" 
 
@@ -369,7 +379,12 @@ nohit=0
 
 webserviceCalls = 0 
 localResolve = 0 
+localMemResolve = 0 
 startTime = time.asctime(time.localtime(time.time()))
+
+lastCleanupTimeAircraft = datetime.datetime.now()
+purgeMinutesAircraft = 60
+
 
 # grab aircraft.json from the reciever
 
@@ -378,8 +393,10 @@ adsbExchangeBase = 'https://globe.adsbexchange.com/?icao='
 while True:
   aircraftCount= 0 
 
+
+
   try:
-      webserviceCalls += 1
+      
       r = requests.get(f'{receiver_url}/dump1090/data/aircraft.json', timeout=(5,5))
       if r.status_code != 200:
         raise ValueError(f'ERROR: getting aircraft json data :{r.text}')
@@ -397,18 +414,18 @@ while True:
       aircraftCount= 0 
 
 
- 
-  
-  
-  part1 =  "+++---------- Start " + startTime + "-------------------------------------------------------------Current "
+  part1 =  "+++---------- Start " + startTime + "-------------------------------------Current "
   part2 = time.asctime(time.localtime(time.time()))
   part3 = str(aircraftCount)
   part4 = "webservice " + str(webserviceCalls)
-  part5 = "local " + str(localResolve)
-  part6 = "----+++"
+  part5 = "localDB " + str(localResolve)
+  part6 = "localMem " + str(localMemResolve) + "----+++"
   #outline = part1 + part2 + "--" + part3 + "--" + "--"+ part4 + part5 +  "--"  + part6
   outline = part1 + part2 + "--" + part3 + "--" + part4 + "--" + part5 +  "--"  + part6
-  print (outline)
+  print (outline) 
+  
+  
+
 
 #loop thru the aircraft 
   i = 00
@@ -421,34 +438,55 @@ while True:
    strICAO = ""
    knownNoHitAircraft = "False"
    knownAircraft = "False"
-   if isKnownPlaneDB(icaohex):
+   if isKnownPlane(icaohex):
       knownAircraft = "True"
-      localResolve += 1
-      #addAircraft(icaohex)
-   else:
-       if ( not isKnownNoHitCheck(icaohex) ):
-            try:
-               knownNoHitAircraft = "True" 
-               icao_response = requests.get(f'https://hexdb.io/api/v1/aircraft/{icaohex}', timeout=(5,5))
-               icao_data = icao_response.json()
-               if (icao_response.status_code == 200 ):
-                   strICAO = str(icao_data['OperatorFlagCode'])
-                   owners=icao_data['RegisteredOwners']
-                   strReg = str(icao_data['Registration'])
-                   strType =str(icao_data['Type'])
-                   strAircraftID = str(icaohex)
-                   addAircraft(icaohex)
-               else:
-                    addNoHit(icaohex)
-                    nohit += 1 
-                    cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/nohit -u me -P me -m "' + icaohex + " " + str(nohit) +'"'
-                    os.system(cmd) 
-                    addIfNewNoHit(icaohex)      
-            except Error as e:
-                strICAO = "ERROR"
-                print(e)
+      localMemResolve += 1
+      outPutAircraft()
+   else: 
 
- 
+    if isKnownPlaneDB(icaohex):
+        knownAircraft = "True"
+        localResolve += 1
+        #addAircraft(icaohex)
+    else:
+        if ( not isKnownNoHitCheck(icaohex) ):
+                try:
+                    knownNoHitAircraft = "True" 
+                    webserviceCalls += 1
+                    icao_response = requests.get(f'https://hexdb.io/api/v1/aircraft/{icaohex}', timeout=(15,15))
+                    icao_data = icao_response.json()
+                    if (icao_response.status_code == 200 ):
+                        strICAO = str(icao_data['OperatorFlagCode'])
+                        owners=icao_data['RegisteredOwners']
+                        strReg = str(icao_data['Registration'])
+                        strType =str(icao_data['Type'])
+                        strAircraftID = str(icaohex)
+                        knownAircraft = "True"
+                        addAircraft(icaohex)
+                    else:
+                            addNoHit(icaohex)
+                            nohit += 1 
+                            cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/nohit -u me -P me -m "' + icaohex + " " + str(nohit) +'"'
+                            os.system(cmd) 
+                            addIfNewNoHit(icaohex)      
+                except Error as e:
+                    strICAO = "ERROR"
+                    #print(e)
+
+
+   timeSinceLastCleanupAircraft = datetime.datetime.now() - lastCleanupTimeAircraft
+   minutesSinceLastCleanupAircraft = timeSinceLastCleanupAircraft.total_seconds() / 60
+
+   if (minutesSinceLastCleanupAircraft> purgeMinutesAircraft):
+       #cleanAircraft()
+       lastCleanupTimeAircraft = datetime.datetime.now()
+       hold1 = len(aircraftSession)
+       cleanAircraft()
+       hold2 = len(aircraftSession)
+       outLine = time.asctime(time.localtime(time.time()))+ " | Clean up time before " + str(hold1) + " | after " + str(hold2) 
+       outcolor = "blue"
+       print(colored(outLine, outcolor)) 
+       #aircraftSession = []
 
   # print (str(aircraftCount) + " - " + str(i) + " - " + icaohex  + " - " + strICAO + " -known nohit " + knownNoHitAircraft + " -known  " + knownAircraft )
 
