@@ -128,7 +128,7 @@ def outPutAircraft():
             cur = conn.commit
             cur = conn.close             
 
-    outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type()+ " | " + knownAircraft + " | " + adsbExchangeBaseFull) 
+    outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type()+ " | " + adsbExchangeBaseFull) 
     print(colored(outLine, outcolor))    
 
 
@@ -298,7 +298,62 @@ def isKnownPlaneDB(aircraftID):
         return True
     return False    
     
-    
+###
+def checkFAA(aircraftID):
+    global knownPlane
+# create a database connection
+    conn = create_connection(database)
+    cur = conn.cursor()
+    aircraftIDq = aircraftID + "%"
+    cur.execute("SELECT * FROM MASTER WHERE AIRCRAFTID =?;", (aircraftID,))
+
+    rows = cur.fetchall()
+    cur.close 
+
+    for row in rows:
+        #print("info avail locally")
+
+        icaohex =row[2]
+        owners =row[1]
+        operatorFlagCode ="xxx"
+        strReg ="N" + row[0]
+        strType ="xxx"
+        epochTime = datetime.datetime.now()
+        interesting = "False"
+        knownPlane = "True"
+        
+        strICAO = str(operatorFlagCode)
+        strAircraftID = str(aircraftID)
+        p = Aircraft(str(aircraftID))
+        p.set_Registration( strReg)
+        p.set_OperatorFlagCode(strICAO)
+        p.set_Type(strType)
+        p.set_Owner(owners)
+        localtime = time.asctime( time.localtime(time.time()) )
+        localtimeComputer = datetime.datetime.now()
+        p.set_WhenSeen(str(localtime))
+        p.set_WhenSeenComputer(localtimeComputer)
+        p.set_Interesting(interesting)
+
+        if interesting == "True":
+            p.set_AlertTime(localtimeComputer)
+            #add the aircraft to the database
+            #add a seen record
+            conn = create_connection(database)
+            cur = conn.cursor()
+            epochTime = time.time() 
+            cur.execute("INSERT INTO AIRCRAFTSIGHTINGS VALUES(?,?);",(icaohex,epochTime ))
+            cur = conn.commit
+            cur = conn.close
+        else:
+            p.set_Interesting("False")
+            interesting = "False" 
+
+        aircraftSession.append(p)
+        outPutAircraft()
+        return True
+    return False 
+###  
 
 def addIfNewNoHit(aircraftID):
     
@@ -478,7 +533,7 @@ while True:
                     else:
                             addNoHit(icaohex)
                             nohit += 1
-
+                            checkFAA(icaohex)
                             cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/nohit -u me -P me -m "' + icaohex + " " + str(nohit) +'"'
                             os.system(cmd) 
                             addIfNewNoHit(icaohex)    
@@ -508,9 +563,11 @@ while True:
        outLine = time.asctime(time.localtime(time.time()))+ " | Clean up time before " + str(hold1) + " | after " + str(hold2) 
        outcolor = "yellow"
        print(colored(outLine, outcolor)) 
-    
-  time.sleep(sampling_period_seconds) 
-
+  myCounbt = 0   
+  for  mycount in range(sampling_period_seconds):
+   print(".",end="")
+   time.sleep(1) 
+  print("")
    
   # print (str(aircraftCount) + " - " + str(i) + " - " + icaohex  + " - " + strICAO + " -known nohit " + knownNoHitAircraft + " -known  " + knownAircraft )
 
