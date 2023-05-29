@@ -322,6 +322,7 @@ def checkFAA(aircraftID):
         interesting = "False"
         knownPlane = "True"
         
+        owners = owners.rstrip()
         strICAO = str(operatorFlagCode)
         strAircraftID = str(aircraftID)
         p = Aircraft(str(aircraftID))
@@ -354,6 +355,24 @@ def checkFAA(aircraftID):
         return True
     return False 
 ###  
+
+def knownNoHitDB(aircraftID):
+    
+
+# create a database connection
+    conn = create_connection(database)
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM NOHITAIRCRAFT WHERE AIRCRAFTID=?;", (aircraftID,))
+
+    rows = cur.fetchall()
+    cur.close 
+
+    for row in rows:
+        #print(row)
+        return True
+   
+    return False        
+
 
 def addIfNewNoHit(aircraftID):
     
@@ -514,7 +533,8 @@ while True:
         outPutAircraft()
         #addAircraft(icaohex)
     else:
-        if ( not isKnownNoHitCheck(icaohex) ):
+        #if ( not isKnownNoHitCheck(icaohex) ):
+        if ( not knownNoHitDB(icaohex) ):
                 try:
                     knownNoHitAircraft = "False" 
                     webserviceCalls += 1
