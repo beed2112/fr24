@@ -369,6 +369,7 @@ def knownNoHitDB(aircraftID):
 
     for row in rows:
         #print(row)
+        knownNoHitDB += 1
         return True
    
     return False        
@@ -460,8 +461,13 @@ nohit=0
 webServiceError=0
 
 webserviceCalls = 0 
+
+totalAircraftCount = 0
+
 localResolve = 0 
 localMemResolve = 0 
+knownNoHitDB = 0
+
 startTime = time.asctime(time.localtime(time.time()))
 
 lastCleanupTimeAircraft = datetime.datetime.now()
@@ -496,12 +502,12 @@ while True:
   except:
       aircraftCount= 0 
 
+  totalAircraftCount = totalAircraftCount + aircraftCount
 
-  part1 =  "+++-----Current " + time.asctime(time.localtime(time.time()))
-  part2 =  "----- Start " + startTime + "------------"
-  part3 = "  airCraftNow " + str(aircraftCount) + " = fltrd  " + str(filteredAircraft)
+  part1 =  "+++--Current " + time.asctime(time.localtime(time.time()))
+  part2 =  "-- Start " + startTime + "-- total seen " + str(totalAircraftCount)
   part4 = "--wsCall " + str(webserviceCalls) + "--wsErr " + str(webServiceError)
-  part5 = "localDB " + str(localResolve)
+  part5 = "--nohit  " + str(nohit) + "--localDB " + str(localResolve)
   part6 = "localMem " + str(localMemResolve) + "----+++"
   #outline = part1 + part2 + "--" + part3 + "--" + "--"+ part4 + part5 +  "--"  + part6
   outline =  part1 + part2 + "--" + part3 + "--" + part4 + "--" + part5 +  "--"  + part6
