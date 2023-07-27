@@ -99,7 +99,7 @@ def outPutAircraft():
 
     itemNum = returnPlaneIndex(str(icaohex))
 
-    outcolor="white"
+    outcolor= setOutcolor
     minutes = 0 
     if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
         outcolor="green"
@@ -127,12 +127,17 @@ def outPutAircraft():
             cur.execute("INSERT INTO AIRCRAFTSIGHTINGS VALUES(?,?);",(icaohex,epochTime ))
             cur = conn.commit
             cur = conn.close             
-
-    outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type()+ " | " + adsbExchangeBaseFull) 
+    #outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  dataSource + " | " + adsbExchangeBaseFull) 
+    
+    #outLine = dataSource + " | " +  str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
+    outLine = str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
+    mqttOutLine = str(outcolor) + "|" + str(aircraftSession[itemNum].get_aircraftID()) + " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type()) 
+    mqttOutLineLen = "-- " + str(len(mqttOutLine))
     print(colored(outLine, outcolor))    
 
-
-
+    cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +   mqttOutLineLen +'"'
+    os.system(cmd) 
+                            
 def addAircraft(aircraftID):
 
     global aircraftSession
@@ -246,6 +251,9 @@ CREATE TABLE AIRCRAFT(
 
 def isKnownPlaneDB(aircraftID):
     global knownPlane
+    global strICAO
+    global owners
+    global strReg
 # create a database connection
     conn = create_connection(database)
     cur = conn.cursor()
@@ -278,6 +286,17 @@ def isKnownPlaneDB(aircraftID):
         p.set_WhenSeen(str(localtime))
         p.set_WhenSeenComputer(localtimeComputer)
         p.set_Interesting(interesting)
+
+
+        if (interestingAircraft()):
+            p.set_Interesting("True")
+            p.set_AlertTime(localtimeComputer)
+            #add the aircraft to the database
+            #add a seen record
+            interesting = "True"
+        else:
+            p.set_Interesting("False")
+            interesting = "False" 
 
         if interesting == "True":
             p.set_AlertTime(localtimeComputer)
@@ -356,7 +375,7 @@ def checkFAA(aircraftID):
     return False 
 ###  
 
-def knownNoHitDB(aircraftID):
+def dbKnownNoHit(aircraftID):
     
 
 # create a database connection
@@ -369,7 +388,7 @@ def knownNoHitDB(aircraftID):
 
     for row in rows:
         #print(row)
-        knownNoHitDB += 1
+       # knownNoHitDB += 1
         return True
    
     return False        
@@ -430,9 +449,9 @@ sampling_period =60
 sampling_period_seconds = int(sampling_period)
 
 excludeOperatorList="LXJ,AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,ASH,DAL,ENY,NKS,VOI,JBU,WSW,UPS,SWQ,ABX,FDX,QXE,SLI,EJA,JZA,ROU,GAJ,FDY,CFS,NJAS"
-watchlistOwner= ["Missile Defense Agency","NASCAR", "Motorsports","Federal", "United States", "Oprah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Museum", "Google", "Apple", "Penske" , "Cardinals" , "Stewart-Haas"]
+watchlistOwner= ["ACES","Missile Defense Agency","NASCAR", "Motorsports","Federal", "United States", "Oprah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Museum", "Google", "Apple", "Penske" , "Cardinals" , "Stewart-Haas" , "Tanker"]
 watchReg="N44SF,N812LE,N353P,N781MM,N88WR,N383LS,N78HV,N4DP,N9165H,N519JG,N280NV"
-watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1,L1P,T6,BGR"
+watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1,L1P,T6,BGR,TNK"
 
 global aircraftSession
 global noHitSession
@@ -448,6 +467,8 @@ global lastCleanupTimeAircraft
 global purgeMinutesAircraft
 global knownAircraft
 global filteredAircraft 
+global knownNoHitDB
+global setOutcolor
 
 database = "/home/beed2112/fr24/aircraftMon.db" 
 
@@ -471,7 +492,7 @@ knownNoHitDB = 0
 startTime = time.asctime(time.localtime(time.time()))
 
 lastCleanupTimeAircraft = datetime.datetime.now()
-purgeMinutesAircraft = 60
+purgeMinutesAircraft = 240
 
 
 # grab aircraft.json from the reciever
@@ -504,13 +525,14 @@ while True:
 
   totalAircraftCount = totalAircraftCount + aircraftCount
 
-  part1 =  "+++--Current " + time.asctime(time.localtime(time.time()))
-  part2 =  "-- Start " + startTime + "-- total seen " + str(totalAircraftCount)
+  #part1 =  "+++--Curr " + time.asctime(time.localtime(time.time()))
+  part1 =  "+++" 
+  part2 =  "-- Strt " + startTime + "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount)
   part4 = "--wsCall " + str(webserviceCalls) + "--wsErr " + str(webServiceError)
-  part5 = "--nohit  " + str(nohit) + "--localDB " + str(localResolve)
-  part6 = "localMem " + str(localMemResolve) + "----+++"
+  part5 = "--knwnNoHit " + str(knownNoHitDB) +  "--nohit " + str(nohit) + "--lclDB " + str(localResolve)
+  part6 = "lclMem " + str(localMemResolve) + "--+++"
   #outline = part1 + part2 + "--" + part3 + "--" + "--"+ part4 + part5 +  "--"  + part6
-  outline =  part1 + part2 + "--" + part3 + "--" + part4 + "--" + part5 +  "--"  + part6
+  outline =  part1 + part2 +  "--" + part4 + "--" + part5 +  "--"  + part6
   print (outline) 
   
   
@@ -523,24 +545,27 @@ while True:
    icaohex = aircraft_data['aircraft'][i]['hex']
  
    i += 1
-  
+   setOutcolor = "white"
    strICAO = ""
    knownNoHitAircraft = "False"
    knownAircraft = "False"
    if isKnownPlane(icaohex):
       knownAircraft = "True"
       localMemResolve += 1
+      dataSource = "memory    "
       outPutAircraft()
    else: 
 
     if isKnownPlaneDB(icaohex):
         knownAircraft = "True"
         localResolve += 1
+        dataSource = "local     "
         outPutAircraft()
         #addAircraft(icaohex)
     else:
         #if ( not isKnownNoHitCheck(icaohex) ):
-        if ( not knownNoHitDB(icaohex) ):
+        #if ( dbKnownNoHit(icaohex) == "False" ):
+        if  not dbKnownNoHit(icaohex) :
                 try:
                     knownNoHitAircraft = "False" 
                     webserviceCalls += 1
@@ -553,6 +578,8 @@ while True:
                         strType =str(icao_data['Type'])
                         strAircraftID = str(icaohex)
                         knownAircraft = "True"
+                        dataSource = "web       "
+                        setOutcolor = "cyan"
                         #print ("++++++++++++++++++++++++++++++++++++++++NEW PLANE")
                         addAircraft(icaohex)
                         
@@ -568,7 +595,8 @@ while True:
                     strICAO = "ERROR"
                     webServiceError += 1
                     print(e)
-
+        else:
+            knownNoHitDB += 1
 
    timeSinceLastCleanupAircraft = datetime.datetime.now() - lastCleanupTimeAircraft
    minutesSinceLastCleanupAircraft = timeSinceLastCleanupAircraft.total_seconds() / 60
@@ -579,14 +607,14 @@ while True:
        hold1 = len(aircraftSession)
        cleanAircraft()
        hold2 = len(aircraftSession)
-       outLine = time.asctime(time.localtime(time.time()))+ " | Clean up time before " + str(hold1) + " | after " + str(hold2) 
+       outLine = time.asctime(time.localtime(time.time()))+ " | Aircraft memory clean up time before " + str(hold1) + " | after " + str(hold2) 
        outcolor = "blue"
        print(colored(outLine, outcolor)) 
        #aircraftSession = []
        hold1 = len(noHitSession)
        cleanNoHitAircraft()
        hold2 = len(noHitSession)
-       outLine = time.asctime(time.localtime(time.time()))+ " | Clean up time before " + str(hold1) + " | after " + str(hold2) 
+       outLine = time.asctime(time.localtime(time.time()))+ " | noHit memory clean up time before " + str(hold1) + " | after " + str(hold2) 
        outcolor = "yellow"
        print(colored(outLine, outcolor)) 
   myCounbt = 0   
