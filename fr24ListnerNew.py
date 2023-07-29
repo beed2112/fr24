@@ -470,7 +470,7 @@ global filteredAircraft
 global knownNoHitDB
 global setOutcolor
 
-database = "/home/beed2112/fr24/aircraftMon.db" 
+database = "aircraftMon.db" 
 
 aircraftSession = []
 noHitSession = []
