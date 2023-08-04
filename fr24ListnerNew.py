@@ -135,7 +135,7 @@ def outPutAircraft():
     #mqttOutLineLen = "-- " + str(len(mqttOutLine))
     print(colored(outLine, outcolor))    
 
-    cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +   mqttOutLineLen +'"'
+    cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
     os.system(cmd) 
                             
 def addAircraft(aircraftID):
