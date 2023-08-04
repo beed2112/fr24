@@ -132,7 +132,7 @@ def outPutAircraft():
     #outLine = dataSource + " | " +  str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
     outLine = str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
     mqttOutLine = str(outcolor) + "|" + str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type()) 
-    #mqttOutLineLen = "-- " + str(len(mqttOutLine))
+  
     print(colored(outLine, outcolor))    
 
     cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
