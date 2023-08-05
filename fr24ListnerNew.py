@@ -60,7 +60,6 @@ def returnPlaneIndex(aircraftID):
     global aircraftSession
     count = 0
     for p in aircraftSession:
-        print("aircraftsession")
         if( p.aircraftID == aircraftID):
             return count
         count = count + 1
