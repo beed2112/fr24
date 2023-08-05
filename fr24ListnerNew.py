@@ -70,7 +70,7 @@ def isKnownNoHitCheck(aircraftID):
     
     for p in noHitSession:
         if( p.noHitID == aircraftID):
-            print("known no hit")
+            #print("known no hit")
             return True
     return False
 
@@ -92,7 +92,6 @@ def addAircraftDB(icaohex):
         #cur.execute("INSERT INTO AIRCRAFT VALUES('icaohex2','2','3','4','5', 6);")
         cur = conn.commit
         cur = conn.close   
-        print("addaircraft")
 
 #add an aircraft to the session object
 def outPutAircraft():
