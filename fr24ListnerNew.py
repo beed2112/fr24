@@ -539,7 +539,7 @@ while True:
   print (outline) 
 
    
-  mqttOutLine = str(outcolor) + "|" part1 + part2 
+  mqttOutLine = str(outcolor) + "|" +  part1 + part2 
   cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
   os.system(cmd) 
 
