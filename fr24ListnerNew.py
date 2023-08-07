@@ -538,7 +538,7 @@ while True:
   outline =  part1 + part2 +  "--" + part4 + "--" + part5 +  "--"  + part6
   print (outline) 
 
-   
+  outcolor =  "cyan" 
   mqttOutLine = str(outcolor) + "|" +  part1 + part2 
   cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
   os.system(cmd) 
