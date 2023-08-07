@@ -52,6 +52,7 @@ def isKnownPlane(aircraftID):
             epochTime =  p.aircraftWhenSeenComputer
             interesting = p.aircraftInteresting
             knownPlane = "True"
+            print("known plane")
             return True
     return False
 
@@ -70,7 +71,7 @@ def isKnownNoHitCheck(aircraftID):
     
     for p in noHitSession:
         if( p.noHitID == aircraftID):
-            #print("known no hit")
+            print("known no hit")
             return True
     return False
 
@@ -90,6 +91,7 @@ def addAircraftDB(icaohex):
         epochTime = time.time() 
         cur.execute("INSERT INTO AIRCRAFT VALUES(?,?,?,?,?,?,?);",(icaohex, owners, strICAO, strReg, strType, epochTime, interesting ))
         #cur.execute("INSERT INTO AIRCRAFT VALUES('icaohex2','2','3','4','5', 6);")
+        print("known plane") 
         cur = conn.commit
         cur = conn.close   
 
@@ -534,8 +536,10 @@ while True:
   #outline = part1 + part2 + "--" + part3 + "--" + "--"+ part4 + part5 +  "--"  + part6
   outline =  part1 + part2 +  "--" + part4 + "--" + part5 +  "--"  + part6
   print (outline) 
-  
-  
+
+   mqttOutLine = part1 + part2 
+  cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
+  os.system(cmd) 
 
 
 #loop thru the aircraft 
