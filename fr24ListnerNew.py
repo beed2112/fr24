@@ -310,7 +310,7 @@ def isKnownPlaneDB(aircraftID):
             cur.execute("INSERT INTO AIRCRAFTSIGHTINGS VALUES(?,?);",(icaohex,epochTime ))
             cur = conn.commit
             cur = conn.close
-             print("known adding sighting info")
+            print("known adding sighting info")
         else:
             p.set_Interesting("False")
             interesting = "False" 
