@@ -52,7 +52,7 @@ def isKnownPlane(aircraftID):
             epochTime =  p.aircraftWhenSeenComputer
             interesting = p.aircraftInteresting
             knownPlane = "True"
-            print("known plane")
+            print("known plane - local DB")
             return True
     return False
 
@@ -90,8 +90,8 @@ def addAircraftDB(icaohex):
         cur = conn.cursor()
         epochTime = time.time() 
         cur.execute("INSERT INTO AIRCRAFT VALUES(?,?,?,?,?,?,?);",(icaohex, owners, strICAO, strReg, strType, epochTime, interesting ))
-        #cur.execute("INSERT INTO AIRCRAFT VALUES('icaohex2','2','3','4','5', 6);")
-        print("known plane") 
+        cur.execute("INSERT INTO AIRCRAFT VALUES('icaohex2','2','3','4','5', 6);")
+        print("unknown plane - adding  aircraft row") 
         cur = conn.commit
         cur = conn.close   
 
@@ -310,6 +310,7 @@ def isKnownPlaneDB(aircraftID):
             cur.execute("INSERT INTO AIRCRAFTSIGHTINGS VALUES(?,?);",(icaohex,epochTime ))
             cur = conn.commit
             cur = conn.close
+             print("known adding sighting info")
         else:
             p.set_Interesting("False")
             interesting = "False" 
@@ -332,7 +333,7 @@ def checkFAA(aircraftID):
     cur.close 
 
     for row in rows:
-        #print("info avail locally")
+        print("info avail locally")
 
         icaohex =row[2]
         owners =row[1]
