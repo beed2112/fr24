@@ -90,7 +90,7 @@ def addAircraftDB(icaohex):
         cur = conn.cursor()
         epochTime = time.time() 
         cur.execute("INSERT INTO AIRCRAFT VALUES(?,?,?,?,?,?,?);",(icaohex, owners, strICAO, strReg, strType, epochTime, interesting ))
-        cur.execute("INSERT INTO AIRCRAFT VALUES('icaohex2','2','3','4','5', 6);")
+       # cur.execute("INSERT INTO AIRCRAFT VALUES('icaohex2','2','3','4','5', 6);")
         print("unknown plane - adding  aircraft row") 
         cur = conn.commit
         cur = conn.close   
