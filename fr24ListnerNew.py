@@ -105,11 +105,13 @@ def outPutAircraft():
     minutes = 0 
     if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
         outcolor="green"
+        mqttOutcolor = "TFT_GREEN"  
         timeSince = datetime.datetime.now() - aircraftSession[itemNum].get_AlertTime() 
         minutes = timeSince.total_seconds() / 60
 
         if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
             outcolor="yellow" 
+            mqttOutcolor = "TFT_YELLOW"  
             localtimeComputer = datetime.datetime.now()
             aircraftSession[itemNum].set_AlertTime(localtimeComputer)
             #mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
@@ -133,7 +135,7 @@ def outPutAircraft():
     
     #outLine = dataSource + " | " +  str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
     outLine = str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
-    mqttOutLine = str(outcolor) + "|" + str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type()) 
+    mqttOutLine = str(mqttOutcolor) + "|" + str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type()) 
   
     print(colored(outLine, outcolor))    
 
@@ -538,8 +540,8 @@ while True:
   outline =  part1 + part2 +  "--" + part4 + "--" + part5 +  "--"  + part6
   print (outline) 
 
-  outcolor =  "cyan" 
-  mqttOutLine = str(outcolor) + "|" +  part1 + part2 
+  mqttOutcolor =  "TFT_ORANGE" 
+  mqttOutLine = str(mqttOutcolor) + "|" +  part1 + part2 
   cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
   os.system(cmd) 
 
@@ -552,6 +554,7 @@ while True:
  
    i += 1
    setOutcolor = "white"
+   mqttOutcolor = "TFT_WHITE"  
    strICAO = ""
    knownNoHitAircraft = "False"
    knownAircraft = "False"
@@ -586,6 +589,7 @@ while True:
                         knownAircraft = "True"
                         dataSource = "web       "
                         setOutcolor = "cyan"
+                        mqttOutcolor = "TFT_CYAN"  
                         #print ("++++++++++++++++++++++++++++++++++++++++NEW PLANE")
                         addAircraft(icaohex)
                         
@@ -623,6 +627,7 @@ while True:
        outLine = time.asctime(time.localtime(time.time()))+ " | noHit memory clean up time before " + str(hold1) + " | after " + str(hold2) 
        outcolor = "yellow"
        print(colored(outLine, outcolor)) 
+       
   myCounbt = 0   
   for  mycount in range(sampling_period_seconds):
    print(".",end="")
