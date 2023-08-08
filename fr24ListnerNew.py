@@ -97,7 +97,7 @@ def addAircraftDB(icaohex):
 
 #add an aircraft to the session object
 def outPutAircraft():
-   global mqttOutcolor
+   
    adsbExchangeBaseFull = adsbExchangeBase + str(icaohex) 
 
     itemNum = returnPlaneIndex(str(icaohex))
@@ -106,13 +106,13 @@ def outPutAircraft():
     minutes = 0 
     if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
         outcolor="green"
-        mqttOutcolor = "TFT_GREEN"  
+        mqttColor = "TFT_GREEN"  
         timeSince = datetime.datetime.now() - aircraftSession[itemNum].get_AlertTime() 
         minutes = timeSince.total_seconds() / 60
 
         if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
             outcolor="yellow" 
-            mqttOutcolor = "TFT_YELLOW"  
+            mqttColor = "TFT_YELLOW"  
             localtimeComputer = datetime.datetime.now()
             aircraftSession[itemNum].set_AlertTime(localtimeComputer)
             #mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
@@ -136,7 +136,7 @@ def outPutAircraft():
     
     #outLine = dataSource + " | " +  str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
     outLine = str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
-    mqttOutLine = str(mqttOutcolor) + "|" + str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type()) 
+    mqttOutLine = str(mqttColor) + "|" + str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type()) 
   
     print(colored(outLine, outcolor))    
 
