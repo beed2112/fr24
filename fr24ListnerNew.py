@@ -111,7 +111,7 @@ def outPutAircraft():
 
         if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
             outcolor="yellow" 
-             mqttOutColor = "TFT_YELLOW"  
+            mqttOutColor = "TFT_YELLOW"  
             localtimeComputer = datetime.datetime.now()
             aircraftSession[itemNum].set_AlertTime(localtimeComputer)
             #mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
