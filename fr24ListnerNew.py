@@ -98,7 +98,7 @@ def addAircraftDB(icaohex):
 #add an aircraft to the session object
 def outPutAircraft():
    
-   adsbExchangeBaseFull = adsbExchangeBase + str(icaohex) 
+    adsbExchangeBaseFull = adsbExchangeBase + str(icaohex) 
 
     itemNum = returnPlaneIndex(str(icaohex))
 
