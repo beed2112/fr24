@@ -97,11 +97,8 @@ def addAircraftDB(icaohex):
 
 #add an aircraft to the session object
 def outPutAircraft():
-   
     adsbExchangeBaseFull = adsbExchangeBase + str(icaohex) 
-
     itemNum = returnPlaneIndex(str(icaohex))
-
     outcolor= setOutcolor
     minutes = 0 
     if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
