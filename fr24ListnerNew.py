@@ -100,6 +100,7 @@ def outPutAircraft():
     adsbExchangeBaseFull = adsbExchangeBase + str(icaohex) 
     itemNum = returnPlaneIndex(str(icaohex))
     outcolor= setOutcolor
+    mqttColor = "TFT_WHITE"
     minutes = 0 
     if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
         outcolor="green"
