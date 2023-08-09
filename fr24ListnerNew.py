@@ -537,7 +537,7 @@ while True:
 
   totalAircraftCount = totalAircraftCount + aircraftCount
 
-  #part1 =  "+++--Curr " + time.asctime(time.localtime(time.time()))
+  part1a =  "+++--Curr " + time.asctime(time.localtime(time.time()))
   part1 =  "+++" 
   part2 =  "-- Strt " + startTime + "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount)
   part4 = "--wsCall " + str(webserviceCalls) + "--wsErr " + str(webServiceError)
@@ -548,7 +548,7 @@ while True:
   print (outline) 
 
   mqttOutColor =  "TFT_ORANGE" 
-  mqttOutLine = str(mqttOutColor) + "|" +  part1 + part2 
+  mqttOutLine = str(mqttOutColor) + "|" +  part1a + part2 
   cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
   os.system(cmd) 
 
