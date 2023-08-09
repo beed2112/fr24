@@ -480,6 +480,60 @@ global knownNoHitDB
 global setOutcolor
 global mqttOutColor
 
+global myTFT_BLACK        
+global myTFT_NAVY         
+global myTFT_DARKGREEN    
+global myTFT_DARKCYAN     
+global myTFT_MAROON       
+global myTFT_PURPLE       
+global myTFT_OLIVE        
+global myTFT_LIGHTGREY    
+global myTFT_DARKGREY     
+global myTFT_BLUE         
+global myTFT_GREEN        
+global myTFT_CYAN         
+global myTFT_RED          
+global myTFT_MAGENTA      
+global myTFT_YELLOW       
+global myTFT_WHITE        
+global myTFT_ORANGE       
+global myTFT_GREENYELLOW  
+global myTFT_PINK         
+global myTFT_BROWN        
+global myTFT_GOLD         
+global myTFT_SILVER       
+global myTFT_SKYBLUE      
+global myTFT_VIOLET       
+
+
+
+myTFT_BLACK        = 0x0000      #   0,   0,   0 
+myTFT_NAVY         = 0x000F      #   0,   0, 128 
+myTFT_DARKGREEN    = 0x03E0      #   0, 128,   0 
+myTFT_DARKCYAN     = 0x03EF      #   0, 128, 128 
+myTFT_MAROON       = 0x7800      # 128,   0,   0 
+myTFT_PURPLE       = 0x780F      # 128,   0, 128 
+myTFT_OLIVE        = 0x7BE0      # 128, 128,   0 
+myTFT_LIGHTGREY    = 0xD69A      # 211, 211, 211 
+myTFT_DARKGREY     = 0x7BEF      # 128, 128, 128 
+myTFT_BLUE         = 0x001F      #   0,   0, 255 
+myTFT_GREEN        = 0x07E0      #   0, 255,   0 
+myTFT_CYAN         = 0x07FF      #   0, 255, 255 
+myTFT_RED          = 0xF800      # 255,   0,   0 
+myTFT_MAGENTA      = 0xF81F      # 255,   0, 255 
+myTFT_YELLOW       = 0xFFE0      # 255, 255,   0 
+myTFT_WHITE        = 0xFFFF      # 255, 255, 255 
+myTFT_ORANGE       = 0xFDA0      # 255, 180,   0 
+myTFT_GREENYELLOW  = 0xB7E0      # 180, 255,   0 
+myTFT_PINK         = 0xFE19      # 255, 192, 203  
+myTFT_BROWN        = 0x9A60      # 150,  75,   0 
+myTFT_GOLD         = 0xFEA0      # 255, 215,   0 
+myTFT_SILVER       = 0xC618      # 192, 192, 192 
+myTFT_SKYBLUE      = 0x867D      # 135, 206, 235 
+myTFT_VIOLET       = 0x915C      # 180,  46, 226 
+
+
+
 database = "/fr24db/aircraftMon.db" 
 
 aircraftSession = []
