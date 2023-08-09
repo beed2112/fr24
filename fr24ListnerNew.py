@@ -103,6 +103,9 @@ def outPutAircraft():
     outcolor= setOutcolor
     mqttOutColor = "TFT_WHITE"
     minutes = 0 
+    if (str(aircraftSession[itemNum].get_Interesting()) != 'a'):
+        mqttOutColor = "TFT_ORANGE"      
+       
     if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
         outcolor="green"
         mqttOutColor = "TFT_GREEN"  
@@ -137,7 +140,8 @@ def outPutAircraft():
     outLine = str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
     mqttOutLine = str( mqttOutColor) + "|" + str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type()) 
   
-    print(colored(outLine, outcolor))    
+   # print(colored(outLine, outcolor))    
+    print(outLine, outcolor)    
 
     cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
     os.system(cmd) 
@@ -621,14 +625,16 @@ while True:
        hold2 = len(aircraftSession)
        outLine = time.asctime(time.localtime(time.time()))+ " | Aircraft memory clean up time before " + str(hold1) + " | after " + str(hold2) 
        outcolor = "blue"
-       print(colored(outLine, outcolor)) 
+       #print(colored(outLine, outcolor)) 
+       print(outLine, outcolor)
        #aircraftSession = []
        hold1 = len(noHitSession)
        cleanNoHitAircraft()
        hold2 = len(noHitSession)
        outLine = time.asctime(time.localtime(time.time()))+ " | noHit memory clean up time before " + str(hold1) + " | after " + str(hold2) 
        outcolor = "yellow"
-       print(colored(outLine, outcolor)) 
+       #print(colored(outLine, outcolor)) 
+       print(outLine, outcolor)
        
   myCounbt = 0   
   for  mycount in range(sampling_period_seconds):
