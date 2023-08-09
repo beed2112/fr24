@@ -101,20 +101,20 @@ def outPutAircraft():
     adsbExchangeBaseFull = adsbExchangeBase + str(icaohex) 
     itemNum = returnPlaneIndex(str(icaohex))
     outcolor= setOutcolor
-    mqttOutColor = "TFT_WHITE"
+    mqttOutColor = myTFT_WHITE
     minutes = 0 
     #if (str(aircraftSession[itemNum].get_aircraftID()[0:1]) != 'a'):
-    #    mqttOutColor = "TFT_ORANGE"      
+    #    mqttOutColor = myTFT_BLUE      
        
     if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
         outcolor="green"
-        mqttOutColor = "TFT_GREEN"  
+        mqttOutColor = myTFT_GREEN  
         timeSince = datetime.datetime.now() - aircraftSession[itemNum].get_AlertTime() 
         minutes = timeSince.total_seconds() / 60
 
         if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
             outcolor="yellow" 
-            mqttOutColor = "TFT_YELLOW"  
+            mqttOutColor = myTFT_YELLOW  
             localtimeComputer = datetime.datetime.now()
             aircraftSession[itemNum].set_AlertTime(localtimeComputer)
             #mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
@@ -600,7 +600,7 @@ while True:
   outline =  part1 + part2 +  "--" + part4 + "--" + part5 +  "--"  + part6
   print (outline) 
 
-  mqttOutColor =  "TFT_ORANGE" 
+  mqttOutColor =  myTFT_ORANGE 
   mqttOutLine = str(mqttOutColor) + "|" +  mqttLine1 + mqttLine2 
   cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
   os.system(cmd) 
