@@ -106,7 +106,7 @@ def outPutAircraft():
 
     #check strICAO first character - set color - will get overridden if "interesting" 
         
-    if (string(str(aircraftSession[itemNum].get_Interesting())[0:1]) == 'a'):
+    if (str(aircraftSession[itemNum].get_Interesting())[0:1] == 'a'):
         mqttOutColor = "TFT_BLUE"
            
     outcolor="green"
