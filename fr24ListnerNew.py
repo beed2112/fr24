@@ -103,39 +103,34 @@ def outPutAircraft():
     outcolor= setOutcolor
     mqttOutColor = "TFT_WHITE"
     minutes = 0 
+    if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
+        outcolor="green"
+        mqttOutColor = "TFT_GREEN"  
+        timeSince = datetime.datetime.now() - aircraftSession[itemNum].get_AlertTime() 
+        minutes = timeSince.total_seconds() / 60
 
-    #check strICAO first character - set color - will get overridden if "interesting" 
-        
-    if (str(aircraftSession[itemNum].get_Interesting())[0:1] == 'a'):
-        mqttOutColor = "TFT_BLUE"
-           
-    outcolor="green"
-    mqttOutColor = "TFT_GREEN"  
-    timeSince = datetime.datetime.now() - aircraftSession[itemNum].get_AlertTime() 
-    minutes = timeSince.total_seconds() / 60
-
-    if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
-        outcolor="yellow" 
-        mqttOutColor = "TFT_YELLOW"  
-        localtimeComputer = datetime.datetime.now()
-        aircraftSession[itemNum].set_AlertTime(localtimeComputer)
-        #mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
-        mqout =  str(aircraftSession[itemNum].get_Owner()) +". " + str(aircraftSession[itemNum].get_Type()) 
-        localtime = time.asctime( time.localtime(time.time()) )
-        mqout2 = localtime  + " " + str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type() +"  " + adsbExchangeBaseFull) 
-        cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "' + mqout + '"'
-        os.system(cmd)
-        cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchforLong -u me -P me -m "' + mqout2 + '"'
-        os.system(cmd) 
-        #alertCount  += 1
-        cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/alerts -u me -P me -m "' + str(alertCount) + '"'
-        os.system(cmd) 
-        conn = create_connection(database)
-        cur = conn.cursor()
-        epochTime = time.time() 
-        cur.execute("INSERT INTO AIRCRAFTSIGHTINGS VALUES(?,?);",(icaohex,epochTime ))
-        cur = conn.commit
-        cur = conn.close             
+        if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
+            outcolor="yellow" 
+            mqttOutColor = "TFT_YELLOW"  
+            localtimeComputer = datetime.datetime.now()
+            aircraftSession[itemNum].set_AlertTime(localtimeComputer)
+            #mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
+            mqout =  str(aircraftSession[itemNum].get_Owner()) +". " + str(aircraftSession[itemNum].get_Type()) 
+            localtime = time.asctime( time.localtime(time.time()) )
+            mqout2 = localtime  + " " + str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type() +"  " + adsbExchangeBaseFull) 
+            cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "' + mqout + '"'
+            os.system(cmd)
+            cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchforLong -u me -P me -m "' + mqout2 + '"'
+            os.system(cmd) 
+            #alertCount  += 1
+            cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/alerts -u me -P me -m "' + str(alertCount) + '"'
+            os.system(cmd) 
+            conn = create_connection(database)
+            cur = conn.cursor()
+            epochTime = time.time() 
+            cur.execute("INSERT INTO AIRCRAFTSIGHTINGS VALUES(?,?);",(icaohex,epochTime ))
+            cur = conn.commit
+            cur = conn.close             
     #outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  dataSource + " | " + adsbExchangeBaseFull) 
     
     #outLine = dataSource + " | " +  str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
@@ -220,7 +215,6 @@ def interestingAircraft():
 
     if strReg in watchReg:
         interestCount += 1        
-       
 
     if interestCount > 0:
        interestingAircraftCount  += 1
@@ -537,7 +531,7 @@ while True:
 
   totalAircraftCount = totalAircraftCount + aircraftCount
 
-  part1a =  "+++--Curr " + time.asctime(time.localtime(time.time()))
+  #part1 =  "+++--Curr " + time.asctime(time.localtime(time.time()))
   part1 =  "+++" 
   part2 =  "-- Strt " + startTime + "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount)
   part4 = "--wsCall " + str(webserviceCalls) + "--wsErr " + str(webServiceError)
@@ -548,7 +542,7 @@ while True:
   print (outline) 
 
   mqttOutColor =  "TFT_ORANGE" 
-  mqttOutLine = str(mqttOutColor) + "|" +  part1a + part2 
+  mqttOutLine = str(mqttOutColor) + "|" +  part1 + part2 
   cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
   os.system(cmd) 
 
