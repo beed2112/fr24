@@ -103,7 +103,12 @@ def outPutAircraft():
     outcolor= setOutcolor
     mqttOutColor = "TFT_WHITE"
     minutes = 0 
-    if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
+
+       #check strICAO first character - set color - will get overridden if "interesting" 
+        str(aircraftSession[itemNum].get_aircraftID())
+        if (string(str(aircraftSession[itemNum].get_Interesting())[0:1]) == 'a'):
+            mqttOutColor = "TFT_BLUE"
+           
         outcolor="green"
         mqttOutColor = "TFT_GREEN"  
         timeSince = datetime.datetime.now() - aircraftSession[itemNum].get_AlertTime() 
@@ -215,6 +220,7 @@ def interestingAircraft():
 
     if strReg in watchReg:
         interestCount += 1        
+       
 
     if interestCount > 0:
        interestingAircraftCount  += 1
