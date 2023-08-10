@@ -104,7 +104,7 @@ def outPutAircraft():
     mqttOutColor = "TFT_WHITE"
     minutes = 0 
     if (str(aircraftSession[itemNum].get_aircraftID()[0:1]) != 'a'):
-        mqttOutColor = "TFT_ORANGE"      
+        mqttOutColor = "TFT_BLUE"      
        
     if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
         outcolor="green"
