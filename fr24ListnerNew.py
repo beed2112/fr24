@@ -210,7 +210,7 @@ def interestingAircraft():
     interestCount = 0
     o= 0
     while o < len(watchlistOwner):
-        if watchlistOwner[o] in owners:
+        if watchlistOwner[o].lower() in owners.lower():
             interestCount += 1
         o += 1
 
