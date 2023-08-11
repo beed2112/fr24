@@ -52,7 +52,7 @@ def isKnownPlane(aircraftID):
             epochTime =  p.aircraftWhenSeenComputer
             interesting = p.aircraftInteresting
             knownPlane = "True"
-            print("known plane - local DB")
+            #print("known plane - local DB")
             return True
     return False
 
@@ -71,7 +71,7 @@ def isKnownNoHitCheck(aircraftID):
     
     for p in noHitSession:
         if( p.noHitID == aircraftID):
-            print("known no hit")
+            #print("known no hit")
             return True
     return False
 
@@ -91,7 +91,7 @@ def addAircraftDB(icaohex):
         epochTime = time.time() 
         cur.execute("INSERT INTO AIRCRAFT VALUES(?,?,?,?,?,?,?);",(icaohex, owners, strICAO, strReg, strType, epochTime, interesting ))
        # cur.execute("INSERT INTO AIRCRAFT VALUES('icaohex2','2','3','4','5', 6);")
-        print("unknown plane - adding  aircraft row") 
+        #print("unknown plane - adding  aircraft row") 
         cur = conn.commit
         cur = conn.close   
 
@@ -141,7 +141,7 @@ def outPutAircraft():
     mqttOutLine = str( mqttOutColor) + "|" + str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type()) 
   
    # print(colored(outLine, outcolor))    
-    print(outLine, outcolor)    
+    print(outLine)    
 
     cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
     os.system(cmd) 
@@ -316,7 +316,7 @@ def isKnownPlaneDB(aircraftID):
             cur.execute("INSERT INTO AIRCRAFTSIGHTINGS VALUES(?,?);",(icaohex,epochTime ))
             cur = conn.commit
             cur = conn.close
-            print("known adding sighting info")
+            #print("known adding sighting info")
         else:
             p.set_Interesting("False")
             interesting = "False" 
@@ -339,7 +339,7 @@ def checkFAA(aircraftID):
     cur.close 
 
     for row in rows:
-        print("info avail locally")
+        #print("info avail locally")
 
         icaohex =row[2]
         owners =row[1]
@@ -626,7 +626,7 @@ while True:
        outLine = time.asctime(time.localtime(time.time()))+ " | Aircraft memory clean up time before " + str(hold1) + " | after " + str(hold2) 
        outcolor = "blue"
        #print(colored(outLine, outcolor)) 
-       print(outLine, outcolor)
+       print(outline)
        #aircraftSession = []
        hold1 = len(noHitSession)
        cleanNoHitAircraft()
@@ -634,16 +634,16 @@ while True:
        outLine = time.asctime(time.localtime(time.time()))+ " | noHit memory clean up time before " + str(hold1) + " | after " + str(hold2) 
        outcolor = "yellow"
        #print(colored(outLine, outcolor)) 
-       print(outLine, outcolor)
+       print(outLine)
        
-  myCounbt = 0   
-  for  mycount in range(sampling_period_seconds):
+  myCount = 0   
+  for  myCount in range(sampling_period_seconds):
    print(".",end="")
    time.sleep(1) 
+   myCont++  
   print("")
    
-  # print (str(aircraftCount) + " - " + str(i) + " - " + icaohex  + " - " + strICAO + " -known nohit " + knownNoHitAircraft + " -known  " + knownAircraft )
-
+  
    
 
 
