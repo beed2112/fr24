@@ -102,8 +102,8 @@ def isKnownNoHitCheck(aircraftID):
 
 # add an aircraft to the list used during the session
 def addNoHit(aircraftID):
-    thisFunctionName = sys._getframe(  ).f_code.co_name
-    outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName) 
+  thisFunctionName = sys._getframe(  ).f_code.co_name
+  outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName) 
   p = noHit(str(aircraftID))
     localtime = time.asctime( time.localtime(time.time()) )
     localtimeComputer = datetime.datetime.now()
