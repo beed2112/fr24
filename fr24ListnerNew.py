@@ -12,8 +12,27 @@ from sqlite3 import Error
 from aircraft import Aircraft
 from nohitAircraft import noHit
 
+
+def outPutMQTT(outColor, outTopic, outMessage):
+  
+  mqttServer = "192.168.0.253"
+  mqttUser = "me"
+  mqttPass = "me"
+  
+  mqttOutLine = str(outColor) + "|" +  outMessage
+
+  #cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
+  
+  cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + '-u  ' mqttUser  + ' -P ' +  mqttPass + '" -m "'  + mqttOutLine + '"'
+  
+  os.system(cmd) 
+
+
+
 # cleanup aged Noaircraft 
 def cleanNoHitAircraft():
+    thisFunctionName = sys._getframe(  ).f_code.co_name
+    outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName) 
    # global aircraftSession
     count = 0
     for p in noHitSession:
