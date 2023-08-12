@@ -105,6 +105,7 @@ def addNoHit(aircraftID):
     thisFunctionName = sys._getframe(  ).f_code.co_name
     outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName) 
     p = noHit(str(aircraftID))
+  
     localtime = time.asctime( time.localtime(time.time()) )
     localtimeComputer = datetime.datetime.now()
     p.set_noHitWhenSeen(str(localtime))
