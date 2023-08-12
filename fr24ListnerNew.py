@@ -659,7 +659,7 @@ while True:
   for  myCount in range(sampling_period_seconds):
    print(".",end="")
    time.sleep(1) 
-   myCont += 1   
+   myCount += 1   
   print("")
    
   
