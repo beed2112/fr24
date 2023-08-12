@@ -22,7 +22,7 @@ def outPutMQTT(outColor, outTopic, outMessage):
 
   #cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
   
-  cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + '-u  ' + mqttUser  + ' -P ' +  mqttPass + '" -m "'  + mqttOutLine + '"'
+  cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + '-u  ' + mqttUser  + ' -P ' +  mqttPass + ' -m "'  + mqttOutLine + '"'
   
   os.system(cmd) 
 
