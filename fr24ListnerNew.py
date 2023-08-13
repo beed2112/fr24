@@ -231,12 +231,12 @@ def addAircraft(aircraftID):
         #add the aircraft to the database
         #add a seen record
         interesting = "True"
-        mqttOutLine = thisFunctionName + " interesting aircraft"
+        mqttOutLine = thisFunctionName + " ==> interesting aircraft"
         outPutMQTTnoColor("planes/trace", mqttOutLine)
     else:
         p.set_Interesting("False")
         interesting = "False" 
-        mqttOutLine = thisFunctionName + " NOT interesting aircraft"
+        mqttOutLine = thisFunctionName + " ==> NOT interesting aircraft"
         outPutMQTTnoColor("planes/trace", mqttOutLine)
             
     if strICAO not in excludeOperatorList:        
@@ -248,13 +248,13 @@ def addAircraft(aircraftID):
             cur = conn.commit
             cur = conn.close 
             aircraftSession.append(p)
-            mqttOutLine = thisFunctionName + " interesting operator"
+            mqttOutLine = thisFunctionName + " ==> interesting operator"
             outPutMQTTnoColor("planes/trace", mqttOutLine)
             outPutAircraft()
             
     else:
          filteredAircraft = filteredAircraft +1  
-         mqttOutLine = thisFunctionName + " filtered operator"
+         mqttOutLine = thisFunctionName + " ==> filtered operator"
          outPutMQTTnoColor("planes/trace", mqttOutLine) 
 #    return
 
@@ -272,7 +272,7 @@ def interestingAircraft():
     while o < len(watchlistOwner):
         if watchlistOwner[o].lower() in owners.lower():
             interestCount += 1
-            mqttOutLine = thisFunctionName + " interesting owner"
+            mqttOutLine = thisFunctionName + " ==> interesting owner"
             outPutMQTTnoColor("planes/trace", mqttOutLine)
         o += 1
 
@@ -281,7 +281,7 @@ def interestingAircraft():
 
     if strReg in watchReg:
         interestCount += 1
-        mqttOutLine = thisFunctionName + " interesting tail number"
+        mqttOutLine = thisFunctionName + " ==> interesting tail number"
         outPutMQTTnoColor("planes/trace", mqttOutLine)
 
     if interestCount > 0:
@@ -636,7 +636,7 @@ while True:
 
   while i < aircraftCount:
    icaohex = aircraft_data['aircraft'][i]['hex']
-   thisFunctionName = "aircraft processing loop STARTS " + icaohex
+   thisFunctionName = "aircraft processing loop STARTS         " + icaohex
    outPutMQTTnoColor("planes/trace", thisFunctionName)    
    i += 1
    setOutcolor = "white"
@@ -677,7 +677,7 @@ while True:
                         setOutcolor = "cyan"
                         mqttOutColor = "TFT_CYAN"  
                         #print ("++++++++++++++++++++++++++++++++++++++++NEW PLANE")
-                        thisFunctionName = " ==> aircraft info provided be WEBSERVICE" + icaohex
+                        thisFunctionName = " ==> aircraft info provided be WEBSERVICE            " + icaohex
                         outPutMQTTnoColor("planes/trace", thisFunctionName)                          
                         addAircraft(icaohex)
                         
@@ -730,7 +730,7 @@ while True:
        outPutMQTTnoColor("planes/trace", thisFunctionName)      
 
 
-  thisFunctionName = "aircraft processing loop ENDS  " + icaohex
+  thisFunctionName = "aircraft processing loop ENDS           " + icaohex
   outPutMQTTnoColor("planes/trace", thisFunctionName)  
   thisFunctionName = "sleeping........................" 
   outPutMQTTnoColor("planes/trace", thisFunctionName)        
