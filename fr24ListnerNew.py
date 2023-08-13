@@ -148,6 +148,7 @@ def outPutAircraft():
     thisFunctionName = sys._getframe(  ).f_code.co_name
     outPutMQTTnoColor("planes/trace", thisFunctionName)   
     global mqttOutColor
+    global alertCount  
     adsbExchangeBaseFull = adsbExchangeBase + str(icaohex) 
     itemNum = returnPlaneIndex(str(icaohex))
     outcolor= setOutcolor
