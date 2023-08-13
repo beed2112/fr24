@@ -175,7 +175,7 @@ def outPutAircraft():
             outPutMQTTnoColor("planes/watchfor", mqout) 
             outPutMQTTnoColor("planes/watchforLong", mqout2) 
             alertCount  += 1
-            outPutMQTTnoColor("planes/alerts", alertCount) 
+            outPutMQTTnoColor("planes/alerts", str(alertCount)) 
             conn = create_connection(database)
             cur = conn.cursor()
             epochTime = time.time() 
