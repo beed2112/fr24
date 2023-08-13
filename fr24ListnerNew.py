@@ -85,7 +85,11 @@ def isKnownPlane(aircraftID):
             interesting = p.aircraftInteresting
             knownPlane = "True"
             #print("known plane - local DB")
+            mqttOutLine = thisFunctionName + " ==> aircraft info provided by local db"
+            outPutMQTTnoColor("planes/trace", mqttOutLine)          
             return True
+         mqttOutLine = thisFunctionName + " ==> aircraft info not in local db"
+         outPutMQTTnoColor("planes/trace", mqttOutLine)             
     return False
 
 # return the index of the aircraft 
@@ -107,6 +111,8 @@ def isKnownNoHitCheck(aircraftID):
     for p in noHitSession:
         if( p.noHitID == aircraftID):
             #print("known no hit")
+            mqttOutLine = thisFunctionName + " ==> aircraft is kown to not return data from web service"
+            outPutMQTTnoColor("planes/trace", mqttOutLine)
             return True
     return False
 
