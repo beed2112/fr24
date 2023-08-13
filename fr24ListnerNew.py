@@ -14,6 +14,8 @@ from nohitAircraft import noHit
 
 
 def outPutMQTT(outColor, outTopic, outMessage):
+  thisFunctionName = sys._getframe(  ).f_code.co_name
+  outPutMQTTnoColor( "planes/trace", thisFunctionName)   
   mqttServer = "192.168.0.253"
   mqttUser = "me"
   mqttPass = "me"
@@ -27,6 +29,8 @@ def outPutMQTT(outColor, outTopic, outMessage):
   os.system(cmd) 
 
 def outPutMQTTnoColor(outTopic, outMessage):
+  thisFunctionName = sys._getframe(  ).f_code.co_name
+  outPutMQTTnoColor( "planes/trace", thisFunctionName)   
   mqttServer = "192.168.0.253"
   mqttUser = "me"
   mqttPass = "me"
@@ -179,7 +183,9 @@ def outPutAircraft():
 
     outLine = str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
  
-    print(outLine)    
+    print(outLine)   
+    mqttOutLine = str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration()) + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type())
+
 
     outPutMQTT(mqttOutColor, "planes/console", mqttOutLine) 
                             
