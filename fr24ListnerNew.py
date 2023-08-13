@@ -552,6 +552,7 @@ global filteredAircraft
 global knownNoHitDB
 global setOutcolor
 global mqttOutColor
+global alertCount
 
 database = "/fr24db/aircraftMon.db" 
 
