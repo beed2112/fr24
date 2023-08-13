@@ -286,10 +286,12 @@ def interestingAircraft():
     if interestCount > 0:
        interestingAircraftCount  += 1
        outPutMQTTnoColor("planes/interestingAircraft", str(interestingAircraftCount))
+       mqttOutLine = thisFunctionName + " ==> determined to be interesting aircraft"
+       outPutMQTTnoColor("planes/trace", mqttOutLine)      
        return True
        
     else:
-        mqttOutLine = thisFunctionName + " determined not interesting aircraft"
+        mqttOutLine = thisFunctionName + " ==> determined NOT to be interesting aircraft"
         outPutMQTTnoColor("planes/trace", mqttOutLine)
         return False
 
@@ -582,7 +584,7 @@ outPutMQTTnoColor( "planes/trace", thisFunctionName)
 receiver_url ='http://192.168.0.116'
 adsbExchangeBase = 'https://globe.adsbexchange.com/?icao='
 while True:
-  thisFunctionName = "forever while loop startup"
+  thisFunctionName = "forever while loop startup ++++++++++++++++++++++++++++++++++++++++"
   outPutMQTTnoColor("planes/trace", thisFunctionName)   
   aircraftCount= 0 
      
@@ -601,10 +603,13 @@ while True:
       'aircraft_count' : len(aircraft_data['aircraft']),
       'messages': aircraft_data['messages']
        }
-      
+      thisFunctionName = " ==> success retrieving aircraft.json"
+      outPutMQTTnoColor("planes/trace", thisFunctionName)        
       aircraftCount= info_data['aircraft_count']
   except:
-      aircraftCount= 0 
+      aircraftCount= 0
+      thisFunctionName = " ==> FAILURE retrieving aircraft.json"
+      outPutMQTTnoColor("planes/trace", thisFunctionName)     
 
   totalAircraftCount = totalAircraftCount + aircraftCount
 
@@ -629,7 +634,7 @@ while True:
 
   while i < aircraftCount:
    icaohex = aircraft_data['aircraft'][i]['hex']
-   thisFunctionName = "aircraft processing loop"
+   thisFunctionName = "aircraft processing loop STARTS " + icaohex
    outPutMQTTnoColor("planes/trace", thisFunctionName)    
    i += 1
    setOutcolor = "white"
@@ -670,22 +675,31 @@ while True:
                         setOutcolor = "cyan"
                         mqttOutColor = "TFT_CYAN"  
                         #print ("++++++++++++++++++++++++++++++++++++++++NEW PLANE")
+                        thisFunctionName = " ==> aircraft info provided be WEBSERVICE" + icaohex
+                        outPutMQTTnoColor("planes/trace", thisFunctionName)                          
                         addAircraft(icaohex)
                         
                     else:
                             addNoHit(icaohex)
                             nohit += 1
-                            checkFAA(icaohex)
-                            mqttOutLine =  icaohex + " " + str(nohit) 
-                            outPutMQTTnoColor("planes/nohit", mqttOutLine)
-                            addIfNewNoHit(icaohex)    
-                            #print ("++++++++++++++++++++++++++++++++++++++++NEW NOHIT")  
+                            if (checkFAA(icaohex)):
+                                thisFunctionName = " ==> aircraft info provided by FAA database" 
+                                outPutMQTTnoColor("planes/trace", thisFunctionName)    
+                            else:  
+                                mqttOutLine =  icaohex + " " + str(nohit) 
+                                outPutMQTTnoColor("planes/nohit", mqttOutLine)
+                                addIfNewNoHit(icaohex)    
+                            
                 except (requests.exceptions.Timeout, requests.exceptions.ConnectTimeout, requests.exceptions.ReadTimeout, Exception) as e: 
                     strICAO = "ERROR"
                     webServiceError += 1
                     print(e)
+                    thisFunctionName = " ==> webservice error" + e
+                    outPutMQTTnoColor("planes/trace", thisFunctionName)
         else:
             knownNoHitDB += 1
+            thisFunctionName = " ==> we know we can't find information on this aircraft" 
+            outPutMQTTnoColor("planes/trace", thisFunctionName)          
 
    timeSinceLastCleanupAircraft = datetime.datetime.now() - lastCleanupTimeAircraft
    minutesSinceLastCleanupAircraft = timeSinceLastCleanupAircraft.total_seconds() / 60
@@ -700,6 +714,8 @@ while True:
        outcolor = "blue"
        #print(colored(outLine, outcolor)) 
        print(outline)
+       thisFunctionName = outline 
+       outPutMQTTnoColor("planes/trace", thisFunctionName)     
        #aircraftSession = []
        hold1 = len(noHitSession)
        cleanNoHitAircraft()
@@ -708,14 +724,22 @@ while True:
        outcolor = "yellow"
        #print(colored(outLine, outcolor)) 
        print(outLine)
-       
+       thisFunctionName = outline 
+       outPutMQTTnoColor("planes/trace", thisFunctionName)      
+
+
+  thisFunctionName = "aircraft processing loop ENDS  " + icaohex
+  outPutMQTTnoColor("planes/trace", thisFunctionName)  
+  thisFunctionName = "sleeping........................" 
+  outPutMQTTnoColor("planes/trace", thisFunctionName)        
   myCount = 0   
   for  myCount in range(sampling_period_seconds):
    print(".",end="")
    time.sleep(1) 
    myCount += 1   
   print("")
-   
+
+
   
    
 
