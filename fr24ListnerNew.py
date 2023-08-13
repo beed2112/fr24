@@ -14,8 +14,7 @@ from nohitAircraft import noHit
 
 
 def outPutMQTT(outColor, outTopic, outMessage):
-  thisFunctionName = sys._getframe(  ).f_code.co_name
-  outPutMQTTnoColor( "planes/trace", thisFunctionName)   
+
   mqttServer = "192.168.0.253"
   mqttUser = "me"
   mqttPass = "me"
@@ -29,8 +28,7 @@ def outPutMQTT(outColor, outTopic, outMessage):
   os.system(cmd) 
 
 def outPutMQTTnoColor(outTopic, outMessage):
-  thisFunctionName = sys._getframe(  ).f_code.co_name
-  outPutMQTTnoColor( "planes/trace", thisFunctionName)   
+
   mqttServer = "192.168.0.253"
   mqttUser = "me"
   mqttPass = "me"
