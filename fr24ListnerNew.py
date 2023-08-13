@@ -88,8 +88,8 @@ def isKnownPlane(aircraftID):
             mqttOutLine = thisFunctionName + " ==> aircraft info provided by local db"
             outPutMQTTnoColor("planes/trace", mqttOutLine)          
             return True
-         mqttOutLine = thisFunctionName + " ==> aircraft info not in local db"
-         outPutMQTTnoColor("planes/trace", mqttOutLine)             
+            mqttOutLine = thisFunctionName + " ==> aircraft info not in local db"
+            outPutMQTTnoColor("planes/trace", mqttOutLine)             
     return False
 
 # return the index of the aircraft 
