@@ -26,12 +26,23 @@ def outPutMQTT(outColor, outTopic, outMessage):
   
   os.system(cmd) 
 
+def outPutMQTTnoColor(outTopic, outMessage):
+  mqttServer = "192.168.0.253"
+  mqttUser = "me"
+  mqttPass = "me"
+  
+  mqttOutLine = str(outColor) + "|" +  outMessage
 
+  #cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
+  
+  cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + ' -u ' + mqttUser  + ' -P ' +  mqttPass + ' -m "'  + mqttOutLine + '"'
+  
+  os.system(cmd) 
 
 # cleanup aged Noaircraft 
 def cleanNoHitAircraft():
     thisFunctionName = sys._getframe(  ).f_code.co_name
-    outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName) 
+    outPutMQTTnoColor( "planes/trace", thisFunctionName) 
    # global aircraftSession
     count = 0
     for p in noHitSession:
@@ -47,7 +58,7 @@ def cleanNoHitAircraft():
 # cleanup aged aircraft 
 def cleanAircraft():
     thisFunctionName = sys._getframe(  ).f_code.co_name
-    outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName) 
+    outPutMQTTnoColor( "planes/trace", thisFunctionName) 
    # global aircraftSession
     count = 0
     for p in aircraftSession:
@@ -63,7 +74,7 @@ def cleanAircraft():
 def isKnownPlane(aircraftID):
     global aircraftSession
     thisFunctionName = sys._getframe(  ).f_code.co_name
-    outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName)   
+    outPutMQTTnoColor("planes/trace", thisFunctionName)   
     for p in aircraftSession:
         if( p.aircraftID == aircraftID):
             icaohex =aircraftID 
@@ -82,7 +93,7 @@ def isKnownPlane(aircraftID):
 def returnPlaneIndex(aircraftID):
     global aircraftSession
     thisFunctionName = sys._getframe(  ).f_code.co_name
-    outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName)   
+    outPutMQTTnoColor("planes/trace", thisFunctionName)   
     count = 0
     for p in aircraftSession:
         if( p.aircraftID == aircraftID):
@@ -93,7 +104,7 @@ def returnPlaneIndex(aircraftID):
 # see if we have already failed to find info on the aircraft 
 def isKnownNoHitCheck(aircraftID):
     thisFunctionName = sys._getframe(  ).f_code.co_name
-    outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName)     
+    outPutMQTTnoColor("planes/trace", thisFunctionName)     
     for p in noHitSession:
         if( p.noHitID == aircraftID):
             #print("known no hit")
@@ -102,18 +113,21 @@ def isKnownNoHitCheck(aircraftID):
 
 # add an aircraft to the list used during the session
 def addNoHit(aircraftID):
-    #thisFunctionName = sys._getframe(  ).f_code.co_name
-    #outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName) 
+ 
     p = noHit(str(aircraftID))
     localtime = time.asctime( time.localtime(time.time()) )
     localtimeComputer = datetime.datetime.now()
     p.set_noHitWhenSeen(str(localtime))
     p.set_noHitWhenSeenComputer(localtimeComputer)
     noHitSession.append(p)
+    thisFunctionName = sys._getframe(  ).f_code.co_name
+    outPutMQTTnoColor("planes/trace", mqttOutLine)
 # and records to DB when interesting aircraft identified
+
+
 def addAircraftDB(icaohex):
   thisFunctionName = sys._getframe(  ).f_code.co_name
-  outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName) 
+  outPutMQTTnoColor( "planes/trace", thisFunctionName) 
   if (not isKnownPlaneDB(str(icaohex))):
         conn = create_connection(database)
         cur = conn.cursor()
@@ -127,7 +141,7 @@ def addAircraftDB(icaohex):
 #add an aircraft to the session object
 def outPutAircraft():
     thisFunctionName = sys._getframe(  ).f_code.co_name
-    outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName)   
+    outPutMQTTnoColor("planes/trace", thisFunctionName)   
     global mqttOutColor
     adsbExchangeBaseFull = adsbExchangeBase + str(icaohex) 
     itemNum = returnPlaneIndex(str(icaohex))
@@ -135,7 +149,7 @@ def outPutAircraft():
     mqttOutColor = "TFT_WHITE"
     minutes = 0 
     if (str(aircraftSession[itemNum].get_aircraftID()[0:1]) != 'a'):
-        mqttOutColor = "TFT_BLUE"      
+        mqttOutColor = "TFT_GOLD"      
        
     if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
         outcolor="green"
@@ -152,13 +166,10 @@ def outPutAircraft():
             mqout =  str(aircraftSession[itemNum].get_Owner()) +". " + str(aircraftSession[itemNum].get_Type()) 
             localtime = time.asctime( time.localtime(time.time()) )
             mqout2 = localtime  + " " + str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type() +"  " + adsbExchangeBaseFull) 
-            cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchfor -u me -P me -m "' + mqout + '"'
-            os.system(cmd)
-            cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/watchforLong -u me -P me -m "' + mqout2 + '"'
-            os.system(cmd) 
-            #alertCount  += 1
-            cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/alerts -u me -P me -m "' + str(alertCount) + '"'
-            os.system(cmd) 
+            outPutMQTTnoColor("planes/watchfor", mqout) 
+            outPutMQTTnoColor("planes/watchforLong", mqout2) 
+            alertCount  += 1
+            outPutMQTTnoColor("planes/alerts", alertCount) 
             conn = create_connection(database)
             cur = conn.cursor()
             epochTime = time.time() 
@@ -168,14 +179,12 @@ def outPutAircraft():
     #outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  dataSource + " | " + adsbExchangeBaseFull) 
     
     #outLine = dataSource + " | " +  str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
+
     outLine = str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
-    mqttOutLine = str( mqttOutColor) + "|" + str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type()) 
-  
-   # print(colored(outLine, outcolor))    
+ 
     print(outLine)    
 
-    cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
-    os.system(cmd) 
+    outPutMQTT(mqttOutColor, "planes/console", mqttOutLine) 
                             
 def addAircraft(aircraftID):
 
@@ -191,7 +200,7 @@ def addAircraft(aircraftID):
     global interesting
     global filteredAircraft
     thisFunctionName = sys._getframe(  ).f_code.co_name
-    outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName) 
+    outPutMQTTnoColor( "planes/trace", thisFunctionName) 
 
 
    
@@ -214,9 +223,13 @@ def addAircraft(aircraftID):
         #add the aircraft to the database
         #add a seen record
         interesting = "True"
+        mqttOutLine = thisFunctionName + " interesting aircraft"
+        outPutMQTTnoColor("planes/trace", mqttOutLine)
     else:
         p.set_Interesting("False")
         interesting = "False" 
+        mqttOutLine = thisFunctionName + " NOT interesting aircraft"
+        outPutMQTTnoColor("planes/trace", mqttOutLine)
             
     if strICAO not in excludeOperatorList:        
             addAircraftDB(aircraftID)  
@@ -227,16 +240,21 @@ def addAircraft(aircraftID):
             cur = conn.commit
             cur = conn.close 
             aircraftSession.append(p)
+            mqttOutLine = thisFunctionName + " interesting operator"
+            outPutMQTTnoColor("planes/trace", mqttOutLine)
             outPutAircraft()
+            
     else:
          filteredAircraft = filteredAircraft +1  
+         mqttOutLine = thisFunctionName + " filtered operator"
+         outPutMQTTnoColor("planes/trace", mqttOutLine) 
 #    return
 
 #is this an aircraft we are interested in 
 
 def interestingAircraft():
     thisFunctionName = sys._getframe(  ).f_code.co_name
-    outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName)   
+    outPutMQTTnoColor("planes/trace", thisFunctionName)   
     #owners=icao_data['RegisteredOwners']
     #strICAO = str(icao_data['OperatorFlagCod
     #strReg = str(icao_data['Registration'])
@@ -246,21 +264,26 @@ def interestingAircraft():
     while o < len(watchlistOwner):
         if watchlistOwner[o].lower() in owners.lower():
             interestCount += 1
+            mqttOutLine = thisFunctionName + " interesting owner"
+            outPutMQTTnoColor("planes/trace", mqttOutLine)
         o += 1
 
     if strICAO in watchICAO:
         interestCount += 1
 
     if strReg in watchReg:
-        interestCount += 1        
+        interestCount += 1
+        mqttOutLine = thisFunctionName + " interesting tail number"
+        outPutMQTTnoColor("planes/trace", mqttOutLine)
 
     if interestCount > 0:
        interestingAircraftCount  += 1
-       cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/interestingAircraft -u me -P me -m "' + str(interestingAircraftCount) + '"'
-       os.system(cmd) 
+       outPutMQTTnoColor("planes/interestingAircraft", str(interestingAircraftCount))
        return True
        
     else:
+        mqttOutLine = thisFunctionName + " determined not interesting aircraft"
+        outPutMQTTnoColor("planes/trace", mqttOutLine)
         return False
 
 ##-----------------------------------------------------------------------------------------------------------------------------###
@@ -272,7 +295,7 @@ def interestingAircraft():
 
 def create_connection(db_file):
     thisFunctionName = sys._getframe(  ).f_code.co_name
-    outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName)   
+    outPutMQTTnoColor("planes/trace", thisFunctionName)   
     conn = None
     try:
         conn = sqlite3.connect(db_file , isolation_level = None)
@@ -294,7 +317,7 @@ CREATE TABLE AIRCRAFT(
 
 def isKnownPlaneDB(aircraftID):
     thisFunctionName = sys._getframe(  ).f_code.co_name
-    outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName)   
+    outPutMQTTnoColor("planes/trace", thisFunctionName)   
     global knownPlane
     global strICAO
     global owners
@@ -366,7 +389,7 @@ def isKnownPlaneDB(aircraftID):
 ###
 def checkFAA(aircraftID):
     thisFunctionName = sys._getframe(  ).f_code.co_name
-    outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName)   
+    outPutMQTTnoColor("planes/trace", thisFunctionName)   
     global knownPlane
 # create a database connection
     conn = create_connection(database)
@@ -425,7 +448,7 @@ def checkFAA(aircraftID):
 
 def dbKnownNoHit(aircraftID):
     thisFunctionName = sys._getframe(  ).f_code.co_name
-    outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName)     
+    outPutMQTTnoColor("planes/trace", thisFunctionName)     
 
 # create a database connection
     conn = create_connection(database)
@@ -445,7 +468,7 @@ def dbKnownNoHit(aircraftID):
 
 def addIfNewNoHit(aircraftID):
     thisFunctionName = sys._getframe(  ).f_code.co_name
-    outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName)     
+    outPutMQTTnoColor("planes/trace", thisFunctionName)     
 
 # create a database connection
     conn = create_connection(database)
@@ -546,14 +569,14 @@ lastCleanupTimeAircraft = datetime.datetime.now()
 purgeMinutesAircraft = 240
 
 thisFunctionName = "mainLine Startup"
-outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName) 
+outPutMQTTnoColor( "planes/trace", thisFunctionName) 
 # grab aircraft.json from the reciever
 
 receiver_url ='http://192.168.0.116'
 adsbExchangeBase = 'https://globe.adsbexchange.com/?icao='
 while True:
   thisFunctionName = "forever while loop startup"
-  outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName)   
+  outPutMQTTnoColor("planes/trace", thisFunctionName)   
   aircraftCount= 0 
      
 
@@ -590,9 +613,8 @@ while True:
   print (outline) 
 
   mqttOutColor =  "TFT_ORANGE" 
-  mqttOutLine = str(mqttOutColor) + "|" +  mqttLine1 + mqttLine2 
-  cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
-  os.system(cmd) 
+  mqttOutLine = mqttLine1 + mqttLine2 
+  outPutMQTT(mqttOutColor, "planes/console", mqttOutLine) 
 
 
 #loop thru the aircraft 
@@ -601,7 +623,7 @@ while True:
   while i < aircraftCount:
    icaohex = aircraft_data['aircraft'][i]['hex']
    thisFunctionName = "aircraft processing loop"
-   outPutMQTT("TFT_WHITE", "planes/trace", thisFunctionName)    
+   outPutMQTTnoColor("planes/trace", thisFunctionName)    
    i += 1
    setOutcolor = "white"
    mqttOutcolor = "TFT_WHITE"  
@@ -647,8 +669,8 @@ while True:
                             addNoHit(icaohex)
                             nohit += 1
                             checkFAA(icaohex)
-                            cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/nohit -u me -P me -m "' + icaohex + " " + str(nohit) +'"'
-                            os.system(cmd) 
+                            mqttOutLine =  icaohex + " " + str(nohit) 
+                                             outPutMQTTnoColor("planes/nohit", mqttOutLine)
                             addIfNewNoHit(icaohex)    
                             #print ("++++++++++++++++++++++++++++++++++++++++NEW NOHIT")  
                 except (requests.exceptions.Timeout, requests.exceptions.ConnectTimeout, requests.exceptions.ReadTimeout, Exception) as e: 
