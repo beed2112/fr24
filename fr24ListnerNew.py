@@ -30,12 +30,9 @@ def outPutMQTTnoColor(outTopic, outMessage):
   mqttServer = "192.168.0.253"
   mqttUser = "me"
   mqttPass = "me"
-  
-  mqttOutLine = str(outColor) + "|" +  outMessage
 
-  #cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
   
-  cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + ' -u ' + mqttUser  + ' -P ' +  mqttPass + ' -m "'  + mqttOutLine + '"'
+  cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + ' -u ' + mqttUser  + ' -P ' +  mqttPass + ' -m "'  + outMessage + '"'
   
   os.system(cmd) 
 
