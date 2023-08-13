@@ -670,7 +670,7 @@ while True:
                             nohit += 1
                             checkFAA(icaohex)
                             mqttOutLine =  icaohex + " " + str(nohit) 
-                                             outPutMQTTnoColor("planes/nohit", mqttOutLine)
+                            outPutMQTTnoColor("planes/nohit", mqttOutLine)
                             addIfNewNoHit(icaohex)    
                             #print ("++++++++++++++++++++++++++++++++++++++++NEW NOHIT")  
                 except (requests.exceptions.Timeout, requests.exceptions.ConnectTimeout, requests.exceptions.ReadTimeout, Exception) as e: 
