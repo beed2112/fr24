@@ -404,7 +404,7 @@ def isKnownPlaneDB(aircraftID):
         p.set_WhenSeenComputer(localtimeComputer)
         p.set_Interesting(interesting)
 
-        mqttOutLine = thisFunctionName + " ==> aircraft info provided by LOCALDB: " + strAircraftID
+        mqttOutLine = thisFunctionName + " ==> aircraft info provided by LOCALDB: " + aircraftID
         outPutMQTTnoColor("planes/trace", mqttOutLine) 
 
         if (interestingAircraft()):
@@ -436,7 +436,7 @@ def isKnownPlaneDB(aircraftID):
         #outPutAircraft()
         return True
     
-    mqttOutLine = thisFunctionName + " ==> aircraft info NOT in LOCALDB: " + strAircraftID
+    mqttOutLine = thisFunctionName + " ==> aircraft info NOT in LOCALDB: " + aircraftID
     outPutMQTTnoColor("planes/trace", mqttOutLine) 
     return False    
     
@@ -480,7 +480,7 @@ def checkFAA(aircraftID):
         p.set_WhenSeenComputer(localtimeComputer)
         p.set_Interesting(interesting)
       
-        mqttOutLine = thisFunctionName + " ==> aircraft info provided by LOCAL FAADB: " + strAircraftID
+        mqttOutLine = thisFunctionName + " ==> aircraft info provided by LOCAL FAADB: " + aircraftID
         outPutMQTTnoColor("planes/trace", mqttOutLine) 
         if interesting == "True":
             p.set_AlertTime(localtimeComputer)
@@ -499,7 +499,7 @@ def checkFAA(aircraftID):
         aircraftSession.append(p)
         outPutAircraft()
         return True
-    mqttOutLine = thisFunctionName + " ==> aircraft info NOT in LOCAL FAADB: " + strAircraftID
+    mqttOutLine = thisFunctionName + " ==> aircraft info NOT in LOCAL FAADB: " + aircraftID
     outPutMQTTnoColor("planes/trace", mqttOutLine)       
     return False 
 ###  
