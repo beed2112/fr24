@@ -664,15 +664,16 @@ while True:
       knownAircraft = "True"
       localMemResolve += 1
       dataSource = "memory    "
-      outPutAircraft()
+      #outPutAircraft()
+      addAircraft(icaohex)
    else: 
 
     if isKnownPlaneDB(icaohex):
         knownAircraft = "True"
         localResolve += 1
         dataSource = "local     "
-        outPutAircraft()
-        #addAircraft(icaohex)
+        #outPutAircraft()
+        addAircraft(icaohex)
     else:
         #if ( not isKnownNoHitCheck(icaohex) ):
         #if ( dbKnownNoHit(icaohex) == "False" ):
