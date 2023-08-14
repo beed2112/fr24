@@ -238,7 +238,11 @@ def addAircraft(aircraftID):
         interesting = "False" 
         mqttOutLine = thisFunctionName + " ==> local DB classifies as NOT an interesting aircraft: " + aircraftID
         outPutMQTTnoColor("planes/trace", mqttOutLine)
-            
+    
+    mqttOutLine = thisFunctionName + " ==> adding aircraft to session object: " + aircraftID
+    outPutMQTTnoColor("planes/trace", mqttOutLine)  
+    aircraftSession.append(p)
+  
     if strICAO not in excludeOperatorList:        
             addAircraftDB(aircraftID)  
             conn = create_connection(database)
@@ -247,7 +251,7 @@ def addAircraft(aircraftID):
             cur.execute("INSERT INTO AIRCRAFTSIGHTINGS VALUES(?,?);",(icaohex,epochTime ))
             cur = conn.commit
             cur = conn.close 
-            aircraftSession.append(p)
+            #aircraftSession.append(p)
             mqttOutLine = thisFunctionName + " ==> potentially interesting operator: " + strICAO
             outPutMQTTnoColor("planes/trace", mqttOutLine)
             outPutAircraft()
