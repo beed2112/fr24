@@ -85,10 +85,10 @@ def isKnownPlane(aircraftID):
             interesting = p.aircraftInteresting
             knownPlane = "True"
             #print("known plane - local DB")
-            mqttOutLine = thisFunctionName + " ==> aircraft info provided by local db"
+            mqttOutLine = thisFunctionName + " ==> aircraft info provided by session object"
             outPutMQTTnoColor("planes/trace", mqttOutLine)          
             return True
-    mqttOutLine = thisFunctionName + " ==> aircraft info not in local db"
+    mqttOutLine = thisFunctionName + " ==> aircraft info not in session object"
     outPutMQTTnoColor("planes/trace", mqttOutLine)             
     return False
 
@@ -111,7 +111,7 @@ def isKnownNoHitCheck(aircraftID):
     for p in noHitSession:
         if( p.noHitID == aircraftID):
             #print("known no hit")
-            mqttOutLine = thisFunctionName + " ==> aircraft is kown to not return data from web service"
+            mqttOutLine = thisFunctionName + " ==> aircraft is kown to not return data from webservice"
             outPutMQTTnoColor("planes/trace", mqttOutLine)
             return True
     return False
@@ -231,12 +231,12 @@ def addAircraft(aircraftID):
         #add the aircraft to the database
         #add a seen record
         interesting = "True"
-        mqttOutLine = thisFunctionName + " ==> local DB classifies as interesting aircraft: " + aircraftID
+        mqttOutLine = thisFunctionName + " ==> local DB classifies as an interesting aircraft: " + aircraftID
         outPutMQTTnoColor("planes/trace", mqttOutLine)
     else:
         p.set_Interesting("False")
         interesting = "False" 
-        mqttOutLine = thisFunctionName + " ==> local DB classifies asNOT interesting aircraft: " + aircraftID
+        mqttOutLine = thisFunctionName + " ==> local DB classifies as NOT an interesting aircraft: " + aircraftID
         outPutMQTTnoColor("planes/trace", mqttOutLine)
             
     if strICAO not in excludeOperatorList:        
@@ -365,6 +365,8 @@ def isKnownPlaneDB(aircraftID):
         p.set_WhenSeenComputer(localtimeComputer)
         p.set_Interesting(interesting)
 
+        mqttOutLine = thisFunctionName + " ==> aircraft info provided by LOCALDB: " + strICAO
+        outPutMQTTnoColor("planes/trace", mqttOutLine) 
 
         if (interestingAircraft()):
             p.set_Interesting("True")
@@ -435,7 +437,9 @@ def checkFAA(aircraftID):
         p.set_WhenSeen(str(localtime))
         p.set_WhenSeenComputer(localtimeComputer)
         p.set_Interesting(interesting)
-
+      
+        mqttOutLine = thisFunctionName + " ==> aircraft info provided by LOCAL FAADB: " + strICAO
+        outPutMQTTnoColor("planes/trace", mqttOutLine) 
         if interesting == "True":
             p.set_AlertTime(localtimeComputer)
             #add the aircraft to the database
@@ -496,7 +500,9 @@ def addIfNewNoHit(aircraftID):
     epochTime = time.time() 
     cur1.execute("INSERT INTO NOHITAIRCRAFT VALUES(?,?);",(aircraftID,epochTime ))
     cur1 = conn1.commit
-    cur1 = conn1.close     
+    cur1 = conn1.close  
+    mqttOutLine = thisFunctionName + " ==> added new know not info aircraft: " + aircraftID
+    outPutMQTTnoColor("planes/trace", mqttOutLine)   
     return True        
 
 #not called
