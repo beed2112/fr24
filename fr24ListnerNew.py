@@ -231,12 +231,12 @@ def addAircraft(aircraftID):
         #add the aircraft to the database
         #add a seen record
         interesting = "True"
-        mqttOutLine = thisFunctionName + " ==> interesting aircraft"
+        mqttOutLine = thisFunctionName + " ==> local DB classifies as interesting aircraft: " + aircraftID
         outPutMQTTnoColor("planes/trace", mqttOutLine)
     else:
         p.set_Interesting("False")
         interesting = "False" 
-        mqttOutLine = thisFunctionName + " ==> NOT interesting aircraft"
+        mqttOutLine = thisFunctionName + " ==> local DB classifies asNOT interesting aircraft: " + aircraftID
         outPutMQTTnoColor("planes/trace", mqttOutLine)
             
     if strICAO not in excludeOperatorList:        
@@ -248,13 +248,13 @@ def addAircraft(aircraftID):
             cur = conn.commit
             cur = conn.close 
             aircraftSession.append(p)
-            mqttOutLine = thisFunctionName + " ==> interesting operator"
+            mqttOutLine = thisFunctionName + " ==> potentially interesting operator: " + strICAO
             outPutMQTTnoColor("planes/trace", mqttOutLine)
             outPutAircraft()
             
     else:
          filteredAircraft = filteredAircraft +1  
-         mqttOutLine = thisFunctionName + " ==> filtered operator"
+         mqttOutLine = thisFunctionName + " ==> filtered operator: " + strICAO
          outPutMQTTnoColor("planes/trace", mqttOutLine) 
 #    return
 
@@ -635,8 +635,9 @@ while True:
   i = 00
 
   while i < aircraftCount:
+   iPrint = i + 1 
    icaohex = aircraft_data['aircraft'][i]['hex']
-   thisFunctionName = "aircraft processing loop STARTS " + str(aircraftCount) + "aircraft processing ==>" + icaohex
+   thisFunctionName = "aircraft processing loop STARTS " + str(aircraftCount) + " aircraft processing #" + str(iPrint) " ==> " + icaohex
    outPutMQTTnoColor("planes/trace", thisFunctionName)    
    i += 1
    setOutcolor = "white"
