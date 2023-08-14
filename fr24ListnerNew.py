@@ -637,7 +637,7 @@ while True:
   while i < aircraftCount:
    iPrint = i + 1 
    icaohex = aircraft_data['aircraft'][i]['hex']
-   thisFunctionName = "aircraft processing loop STARTS " + str(aircraftCount) + " aircraft processing #" + str(iPrint) " ==> " + icaohex
+   thisFunctionName = "aircraft processing loop STARTS " + str(aircraftCount) + " aircraft processing #" + str(iPrint) + " ==> " + icaohex
    outPutMQTTnoColor("planes/trace", thisFunctionName)    
    i += 1
    setOutcolor = "white"
