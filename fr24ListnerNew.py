@@ -396,6 +396,9 @@ def isKnownPlaneDB(aircraftID):
         aircraftSession.append(p)
         #outPutAircraft()
         return True
+    
+    mqttOutLine = thisFunctionName + " ==> aircraft info NOT in LOCALDB: " + strICAO
+    outPutMQTTnoColor("planes/trace", mqttOutLine) 
     return False    
     
 ###
@@ -457,6 +460,8 @@ def checkFAA(aircraftID):
         aircraftSession.append(p)
         outPutAircraft()
         return True
+    mqttOutLine = thisFunctionName + " ==> aircraft info NOT in LOCAL FAADB: " + strICAO
+    outPutMQTTnoColor("planes/trace", mqttOutLine)       
     return False 
 ###  
 
@@ -501,7 +506,7 @@ def addIfNewNoHit(aircraftID):
     cur1.execute("INSERT INTO NOHITAIRCRAFT VALUES(?,?);",(aircraftID,epochTime ))
     cur1 = conn1.commit
     cur1 = conn1.close  
-    mqttOutLine = thisFunctionName + " ==> added new know not info aircraft: " + aircraftID
+    mqttOutLine = thisFunctionName + " ==> added new known no info aircraft: " + aircraftID
     outPutMQTTnoColor("planes/trace", mqttOutLine)   
     return True        
 
