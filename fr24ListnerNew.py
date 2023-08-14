@@ -123,7 +123,7 @@ def isKnownPlane(aircraftID):
                  mqttOutLine = thisFunctionName + " ==> filtered operator: " + strICAO
                  outPutMQTTnoColor("planes/trace", mqttOutLine)           
             return True
-    mqttOutLine = thisFunctionName + " ==> aircraft info not in session object"
+    mqttOutLine = thisFunctionName + " ==> aircraft info not in session object" + strICAO
     outPutMQTTnoColor("planes/trace", mqttOutLine)             
     return False
 
@@ -433,7 +433,7 @@ def isKnownPlaneDB(aircraftID):
             interesting = "False" 
 
         aircraftSession.append(p)
-        #outPutAircraft()
+        outPutAircraft()
         return True
     
     mqttOutLine = thisFunctionName + " ==> aircraft info NOT in LOCALDB: " + aircraftID
