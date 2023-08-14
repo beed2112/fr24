@@ -95,33 +95,33 @@ def isKnownPlane(aircraftID):
                     interesting = "True"
                     mqttOutLine = thisFunctionName + " ==> local DB classifies as an interesting aircraft: " + aircraftID
                     outPutMQTTnoColor("planes/trace", mqttOutLine)
-                else:
-                    p.set_Interesting("False")
-                    interesting = "False" 
-                    mqttOutLine = thisFunctionName + " ==> local DB classifies as NOT an interesting aircraft: " + aircraftID
-                    outPutMQTTnoColor("planes/trace", mqttOutLine)
+            else:
+                p.set_Interesting("False")
+                interesting = "False" 
+                mqttOutLine = thisFunctionName + " ==> local DB classifies as NOT an interesting aircraft: " + aircraftID
+                outPutMQTTnoColor("planes/trace", mqttOutLine)
                 
-                mqttOutLine = thisFunctionName + " ==> adding aircraft to session object: " + aircraftID
-                outPutMQTTnoColor("planes/trace", mqttOutLine)  
-                #aircraftSession.append(p)
-              
-                if strICAO not in excludeOperatorList:        
-                        addAircraftDB(aircraftID)  
-                        conn = create_connection(database)
-                        cur = conn.cursor()
-                        epochTime = time.time() 
-                        cur.execute("INSERT INTO AIRCRAFTSIGHTINGS VALUES(?,?);",(icaohex,epochTime ))
-                        cur = conn.commit
-                        cur = conn.close 
-                        #aircraftSession.append(p)
-                        mqttOutLine = thisFunctionName + " ==> potentially interesting operator: " + strICAO
-                        outPutMQTTnoColor("planes/trace", mqttOutLine)
-                        outPutAircraft()
-                        
-                else:
-                     filteredAircraft = filteredAircraft +1  
-                     mqttOutLine = thisFunctionName + " ==> filtered operator: " + strICAO
-                     outPutMQTTnoColor("planes/trace", mqttOutLine)           
+            mqttOutLine = thisFunctionName + " ==> adding aircraft to session object: " + aircraftID
+            outPutMQTTnoColor("planes/trace", mqttOutLine)  
+            #aircraftSession.append(p)
+          
+            if strICAO not in excludeOperatorList:        
+                    addAircraftDB(aircraftID)  
+                    conn = create_connection(database)
+                    cur = conn.cursor()
+                    epochTime = time.time() 
+                    cur.execute("INSERT INTO AIRCRAFTSIGHTINGS VALUES(?,?);",(icaohex,epochTime ))
+                    cur = conn.commit
+                    cur = conn.close 
+                    #aircraftSession.append(p)
+                    mqttOutLine = thisFunctionName + " ==> potentially interesting operator: " + strICAO
+                    outPutMQTTnoColor("planes/trace", mqttOutLine)
+                    outPutAircraft()
+                    
+            else:
+                 filteredAircraft = filteredAircraft +1  
+                 mqttOutLine = thisFunctionName + " ==> filtered operator: " + strICAO
+                 outPutMQTTnoColor("planes/trace", mqttOutLine)           
             return True
     mqttOutLine = thisFunctionName + " ==> aircraft info not in session object"
     outPutMQTTnoColor("planes/trace", mqttOutLine)             
