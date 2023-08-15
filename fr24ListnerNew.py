@@ -89,7 +89,7 @@ def isKnownPlane(aircraftID):
             outPutMQTTnoColor("planes/trace", mqttOutLine)   
             if (interestingAircraft()):
                     p.set_Interesting("True")
-                    p.set_AlertTime(localtimeComputer)
+                    #p.set_AlertTime(localtimeComputer)
                     #add the aircraft to the database
                     #add a seen record
                     interesting = "True"
@@ -636,7 +636,7 @@ outPutMQTTnoColor( "planes/trace", thisFunctionName)
 receiver_url ='http://192.168.0.116'
 adsbExchangeBase = 'https://globe.adsbexchange.com/?icao='
 while True:
-  thisFunctionName = "forever while loop startup ++++++++++++++++++++++++++++++++++++++++"
+  thisFunctionName = sys._getframe(  ).f_code.co_name + "forever while loop startup ++++++++++++++++++++++++++++++++++++++++"
   outPutMQTTnoColor("planes/trace", thisFunctionName)   
   aircraftCount= 0 
      
@@ -729,7 +729,7 @@ while True:
                         setOutcolor = "cyan"
                         mqttOutColor = "TFT_CYAN"  
                         #print ("++++++++++++++++++++++++++++++++++++++++NEW PLANE")
-                        thisFunctionName = " ==> aircraft info provided be WEBSERVICE            " + icaohex
+                        thisFunctionName = sys._getframe(  ).f_code.co_name + " ==> aircraft info provided be WEBSERVICE            " + icaohex
                         outPutMQTTnoColor("planes/trace", thisFunctionName)                          
                         addAircraft(icaohex)
                         
@@ -782,7 +782,7 @@ while True:
        outPutMQTTnoColor("planes/trace", thisFunctionName)      
 
 
-  thisFunctionName = "aircraft processing loop ENDS           " + icaohex
+  thisFunctionName = sys._getframe(  ).f_code.co_name + "aircraft processing loop ENDS           " + icaohex
   outPutMQTTnoColor("planes/trace", thisFunctionName)  
   thisFunctionName = "sleeping........................" 
   outPutMQTTnoColor("planes/trace", thisFunctionName)        
