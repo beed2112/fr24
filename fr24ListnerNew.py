@@ -11,7 +11,7 @@ from sqlite3 import Error
 #sys.path.append('/home/beed2112/fr24')
 from aircraft import Aircraft
 from nohitAircraft import noHit
-filteredAircraft = 0  
+
 
 def outPutMQTT(outColor, outTopic, outMessage):
 
@@ -72,6 +72,7 @@ def cleanAircraft():
 #check Object to see if aircraft has been seen this session
 def isKnownPlane(aircraftID):
     global aircraftSession
+    global filteredAircraft
     thisFunctionName = sys._getframe(  ).f_code.co_name
     outPutMQTTnoColor("planes/trace", thisFunctionName)   
     for p in aircraftSession:
@@ -241,7 +242,7 @@ def addAircraft(aircraftID):
     global strAircraftID 
     global owners
     global interesting
-    #global filteredAircraft
+    global filteredAircraft
     thisFunctionName = sys._getframe(  ).f_code.co_name
     outPutMQTTnoColor( "planes/trace", thisFunctionName) 
 
@@ -599,7 +600,7 @@ global webserviceCalls
 global lastCleanupTimeAircraft
 global purgeMinutesAircraft
 global knownAircraft
-#global filteredAircraft 
+global filteredAircraft 
 global knownNoHitDB
 global setOutcolor
 global mqttOutColor
@@ -610,7 +611,7 @@ database = "/fr24db/aircraftMon.db"
 aircraftSession = []
 noHitSession = []
 
-#filteredAircraft  = 0 
+filteredAircraft  = 0 
 interestingAircraftCount = 0
 alertCount = 0 
 nohit=0
