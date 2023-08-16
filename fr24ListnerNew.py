@@ -81,7 +81,7 @@ def isKnownPlane(aircraftID):
             icaohex =aircraftID 
             owners = p.aircraftOwner
             operatorFlagCode = p.aircraftOperatorFlagCode
-            strICAO =  p.aircraftOperatorFlagCode
+            
             strReg = p.aircraftRegistration
             strType =p.aircraftType 
             epochTime =  p.aircraftWhenSeenComputer
@@ -108,7 +108,7 @@ def isKnownPlane(aircraftID):
             outPutMQTTnoColor("planes/trace", mqttOutLine)  
             #aircraftSession.append(p)
           
-            if strICAO not in excludeOperatorList:        
+            if operatorFlagCode not in excludeOperatorList:        
                     addAircraftDB(aircraftID)  
                     conn = create_connection(database)
                     cur = conn.cursor()
@@ -117,16 +117,16 @@ def isKnownPlane(aircraftID):
                     cur = conn.commit
                     cur = conn.close 
                     #aircraftSession.append(p)
-                    mqttOutLine = thisFunctionName + " ==> potentially interesting operator: " + strICAO
+                    mqttOutLine = thisFunctionName + " ==> potentially interesting operator: " + operatorFlagCode
                     outPutMQTTnoColor("planes/trace", mqttOutLine)
                     outPutAircraft()
                     
             else:
                  filteredAircraft = filteredAircraft +1  
-                 mqttOutLine = thisFunctionName + " ==> filtered operator: " + strICAO
+                 mqttOutLine = thisFunctionName + " ==> filtered operator: " + operatorFlagCode
                  outPutMQTTnoColor("planes/trace", mqttOutLine)           
             return True
-    mqttOutLine = thisFunctionName + " ==> aircraft info not in session object" + strICAO
+    mqttOutLine = thisFunctionName + " ==> aircraft info not in session object" + operatorFlagCode
     outPutMQTTnoColor("planes/trace", mqttOutLine)             
     return False
 
