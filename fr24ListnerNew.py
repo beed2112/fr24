@@ -437,6 +437,7 @@ def isKnownPlaneDB(aircraftID):
             #print("known adding sighting info")
         else:
             p.set_Interesting("False")
+            p.set_AlertTime(localtimeComputer)
             interesting = "False" 
 
         aircraftSession.append(p)
