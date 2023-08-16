@@ -11,7 +11,7 @@ from sqlite3 import Error
 #sys.path.append('/home/beed2112/fr24')
 from aircraft import Aircraft
 from nohitAircraft import noHit
-
+filteredAircraft = 0  
 
 def outPutMQTT(outColor, outTopic, outMessage):
 
@@ -599,7 +599,7 @@ global webserviceCalls
 global lastCleanupTimeAircraft
 global purgeMinutesAircraft
 global knownAircraft
-global filteredAircraft 
+#global filteredAircraft 
 global knownNoHitDB
 global setOutcolor
 global mqttOutColor
@@ -610,7 +610,7 @@ database = "/fr24db/aircraftMon.db"
 aircraftSession = []
 noHitSession = []
 
-filteredAircraft  = 0 
+#filteredAircraft  = 0 
 interestingAircraftCount = 0
 alertCount = 0 
 nohit=0
@@ -748,7 +748,7 @@ while True:
                     strICAO = "ERROR"
                     webServiceError += 1
                     print(e)
-                    thisFunctionName = " ==> webservice error" + e
+                    thisFunctionName = " ==> webservice error" 
                     outPutMQTTnoColor("planes/trace", thisFunctionName)
         else:
             knownNoHitDB += 1
