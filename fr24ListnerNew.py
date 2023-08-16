@@ -241,7 +241,7 @@ def addAircraft(aircraftID):
     global strAircraftID 
     global owners
     global interesting
-    global filteredAircraft
+    #global filteredAircraft
     thisFunctionName = sys._getframe(  ).f_code.co_name
     outPutMQTTnoColor( "planes/trace", thisFunctionName) 
 
