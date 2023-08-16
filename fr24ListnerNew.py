@@ -125,7 +125,7 @@ def isKnownPlane(aircraftID):
                  mqttOutLine = thisFunctionName + " ==> filtered operator: " + operatorFlagCode
                  outPutMQTTnoColor("planes/trace", mqttOutLine)           
             return True
-    mqttOutLine = thisFunctionName + " ==> aircraft info not in session object" + aircraftID
+    mqttOutLine = thisFunctionName + " ==> aircraft info not in session object: " + aircraftID
     outPutMQTTnoColor("planes/trace", mqttOutLine)             
     return False
 
