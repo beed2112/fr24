@@ -73,6 +73,7 @@ def cleanAircraft():
 def isKnownPlane(aircraftID):
     global aircraftSession
     global filteredAircraft
+    global excludeOperatorList
     thisFunctionName = sys._getframe(  ).f_code.co_name
     outPutMQTTnoColor("planes/trace", thisFunctionName)   
     for p in aircraftSession:
