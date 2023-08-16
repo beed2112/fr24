@@ -260,6 +260,9 @@ def addAircraft(aircraftID):
     p.set_WhenSeen(str(localtime))
     p.set_WhenSeenComputer(localtimeComputer)
 
+    
+    
+
 
 # going to add a column to table  AIRCRAFTINTERSTING -- moving to one aircraft DB 
     if (interestingAircraft()):
@@ -272,6 +275,8 @@ def addAircraft(aircraftID):
         outPutMQTTnoColor("planes/trace", mqttOutLine)
     else:
         p.set_Interesting("False")
+        p.set_Interesting("True")
+        p.set_AlertTime(localtimeComputer)
         interesting = "False" 
         mqttOutLine = thisFunctionName + " ==> local DB classifies as NOT an interesting aircraft: " + aircraftID
         outPutMQTTnoColor("planes/trace", mqttOutLine)
