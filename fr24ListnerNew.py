@@ -81,6 +81,7 @@ def isKnownPlane(aircraftID):
             icaohex =aircraftID 
             owners = p.aircraftOwner
             operatorFlagCode = p.aircraftOperatorFlagCode
+            strICAO = = p.aircraftOperatorFlagCode
             strReg = p.aircraftRegistration
             strType =p.aircraftType 
             epochTime =  p.aircraftWhenSeenComputer
