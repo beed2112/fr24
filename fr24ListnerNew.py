@@ -81,7 +81,6 @@ def isKnownPlane(aircraftID):
             icaohex =aircraftID 
             owners = p.aircraftOwner
             operatorFlagCode = p.aircraftOperatorFlagCode
-            
             strReg = p.aircraftRegistration
             strType =p.aircraftType 
             epochTime =  p.aircraftWhenSeenComputer
@@ -126,7 +125,7 @@ def isKnownPlane(aircraftID):
                  mqttOutLine = thisFunctionName + " ==> filtered operator: " + operatorFlagCode
                  outPutMQTTnoColor("planes/trace", mqttOutLine)           
             return True
-    mqttOutLine = thisFunctionName + " ==> aircraft info not in session object" + operatorFlagCode
+    mqttOutLine = thisFunctionName + " ==> aircraft info not in session object" + aircraftID
     outPutMQTTnoColor("planes/trace", mqttOutLine)             
     return False
 
