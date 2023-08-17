@@ -616,7 +616,7 @@ global mqttOutColor
 global alertCount
 
 database = "/fr24db/aircraftMon.db" 
-database = "/home/beed2112/fr24db/aircraftMon.db"   #local 
+#database = "/home/beed2112/fr24db/aircraftMon.db"   #local 
 
 
 aircraftSession = []
