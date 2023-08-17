@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import time
+
 #from datetime import date
 import datetime
 import requests
@@ -11,7 +12,7 @@ from sqlite3 import Error
 #sys.path.append('/home/beed2112/fr24')
 from aircraft import Aircraft
 from nohitAircraft import noHit
-
+from datetime import datetime, timedelta  
 
 def outPutMQTT(outColor, outTopic, outMessage):
 
@@ -158,7 +159,7 @@ def addNoHit(aircraftID):
  
     p = noHit(str(aircraftID))
     localtime = time.asctime( time.localtime(time.time()) )
-    localtimeComputer = datetime.datetime.now()
+    localtimeComputer = datetime.today()
     p.set_noHitWhenSeen(str(localtime))
     p.set_noHitWhenSeenComputer(localtimeComputer)
     noHitSession.append(p)
@@ -197,13 +198,13 @@ def outPutAircraft():
     if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
         outcolor="green"
         mqttOutColor = "TFT_GREEN"  
-        timeSince = datetime.datetime.now() - aircraftSession[itemNum].get_AlertTime() 
+        timeSince = datetime.today() - aircraftSession[itemNum].get_AlertTime() 
         minutes = timeSince.total_seconds() / 60
 
         if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
             outcolor="yellow" 
             mqttOutColor = "TFT_YELLOW"  
-            localtimeComputer = datetime.datetime.now()
+            localtimeComputer = datetime.today()
             aircraftSession[itemNum].set_AlertTime(localtimeComputer)
             #mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
             mqout =  str(aircraftSession[itemNum].get_Owner()) +". " + str(aircraftSession[itemNum].get_Type()) 
@@ -256,18 +257,21 @@ def addAircraft(aircraftID):
     p.set_Type(strType)
     p.set_Owner(owners)
     localtime = time.asctime( time.localtime(time.time()) )
-    localtimeComputer = datetime.datetime.now()
+    localtimeComputer = datetime.today()
     p.set_WhenSeen(str(localtime))
     p.set_WhenSeenComputer(localtimeComputer)
 
     
     
-
+    #need to make sure that we have values in the AlertTime
+    #seting back in the event it is an interesting plane to get alert when first seen.
+    myDatetime = datetime.today()  
+    myFakeAlertTime = myDatetime - timedelta(minutes = 20) 
+    p.set_AlertTime(localtimeComputer)
 
 # going to add a column to table  AIRCRAFTINTERSTING -- moving to one aircraft DB 
     if (interestingAircraft()):
         p.set_Interesting("True")
-        p.set_AlertTime(localtimeComputer)
         #add the aircraft to the database
         #add a seen record
         interesting = "True"
@@ -275,8 +279,6 @@ def addAircraft(aircraftID):
         outPutMQTTnoColor("planes/trace", mqttOutLine)
     else:
         p.set_Interesting("False")
-        p.set_Interesting("True")
-        p.set_AlertTime(localtimeComputer)
         interesting = "False" 
         mqttOutLine = thisFunctionName + " ==> local DB classifies as NOT an interesting aircraft: " + aircraftID
         outPutMQTTnoColor("planes/trace", mqttOutLine)
@@ -406,7 +408,7 @@ def isKnownPlaneDB(aircraftID):
         p.set_Type(strType)
         p.set_Owner(owners)
         localtime = time.asctime( time.localtime(time.time()) )
-        localtimeComputer = datetime.datetime.now()
+        localtimeComputer = datetime.today()
         p.set_WhenSeen(str(localtime))
         p.set_WhenSeenComputer(localtimeComputer)
         p.set_Interesting(interesting)
@@ -470,7 +472,7 @@ def checkFAA(aircraftID):
         operatorFlagCode ="xxx"
         strReg ="N" + row[0]
         strType ="xxx"
-        epochTime = datetime.datetime.now()
+        epochTime = datetime.today()
         interesting = "False"
         knownPlane = "True"
         
@@ -483,7 +485,7 @@ def checkFAA(aircraftID):
         p.set_Type(strType)
         p.set_Owner(owners)
         localtime = time.asctime( time.localtime(time.time()) )
-        localtimeComputer = datetime.datetime.now()
+        localtimeComputer = datetime.today()
         p.set_WhenSeen(str(localtime))
         p.set_WhenSeenComputer(localtimeComputer)
         p.set_Interesting(interesting)
@@ -614,6 +616,8 @@ global mqttOutColor
 global alertCount
 
 database = "/fr24db/aircraftMon.db" 
+database = "/home/beed2112/fr24db/aircraftMon.db"   #local 
+
 
 aircraftSession = []
 noHitSession = []
@@ -634,7 +638,10 @@ knownNoHitDB = 0
 
 startTime = time.asctime(time.localtime(time.time()))
 
-lastCleanupTimeAircraft = datetime.datetime.now()
+
+
+#lastCleanupTimeAircraft = datetime.today()
+lastCleanupTimeAircraft = datetime.today()
 purgeMinutesAircraft = 240
 
 thisFunctionName = "mainLine Startup"
@@ -763,12 +770,12 @@ while True:
             thisFunctionName = " ==> we know we can't find information on this aircraft" 
             outPutMQTTnoColor("planes/trace", thisFunctionName)          
 
-   timeSinceLastCleanupAircraft = datetime.datetime.now() - lastCleanupTimeAircraft
+   timeSinceLastCleanupAircraft = datetime.today() - lastCleanupTimeAircraft
    minutesSinceLastCleanupAircraft = timeSinceLastCleanupAircraft.total_seconds() / 60
 
    if (minutesSinceLastCleanupAircraft> purgeMinutesAircraft):
        #cleanAircraft()
-       lastCleanupTimeAircraft = datetime.datetime.now()
+       lastCleanupTimeAircraft = datetime.today()
        hold1 = len(aircraftSession)
        cleanAircraft()
        hold2 = len(aircraftSession)
