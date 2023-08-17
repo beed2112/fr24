@@ -13,6 +13,7 @@ from sqlite3 import Error
 from aircraft import Aircraft
 from nohitAircraft import noHit
 from datetime import datetime, timedelta  
+global strICAO 
 
 def outPutMQTT(outColor, outTopic, outMessage):
 
@@ -81,7 +82,8 @@ def isKnownPlane(aircraftID):
         if( p.aircraftID == aircraftID):
             icaohex =aircraftID 
             owners = p.aircraftOwner
-            operatorFlagCode = p.aircraftOperatorFlagCode
+            #operatorFlagCode = p.aircraftOperatorFlagCode
+            strICAO = p.aircraftOperatorFlagCode
             strReg = p.aircraftRegistration
             strType =p.aircraftType 
             epochTime =  p.aircraftWhenSeenComputer
@@ -90,24 +92,34 @@ def isKnownPlane(aircraftID):
             #print("known plane - local DB")
             mqttOutLine = thisFunctionName + " ==> aircraft info provided by session object"
             outPutMQTTnoColor("planes/trace", mqttOutLine)   
-            if (interestingAircraft()):
-                    p.set_Interesting("True")
-                    #p.set_AlertTime(localtimeComputer)
-                    #add the aircraft to the database
-                    #add a seen record
-                    interesting = "True"
-                    mqttOutLine = thisFunctionName + " ==> local DB classifies as an interesting aircraft: " + aircraftID
+            # if (interestingAircraft()):
+            #         p.set_Interesting("True")
+            #         #p.set_AlertTime(localtimeComputer)
+            #         #add the aircraft to the database
+            #         #add a seen record
+            #         interesting = "True"
+            #         mqttOutLine = thisFunctionName + " ==> interestingAircraft classifies as an interesting aircraft: " + aircraftID
+            #         outPutMQTTnoColor("planes/trace", mqttOutLine)
+            # else:
+            #     p.set_Interesting("False")
+            #     interesting = "False" 
+            #     mqttOutLine = thisFunctionName + " ==> local DB classifies as NOT an interesting aircraft: " + aircraftID
+            #     outPutMQTTnoColor("planes/trace", mqttOutLine)
+
+            if (interesting == 'True'):
+
+                    mqttOutLine = thisFunctionName + " ==> interestingAircraft classifies as an interesting aircraft: " + aircraftID
                     outPutMQTTnoColor("planes/trace", mqttOutLine)
             else:
-                p.set_Interesting("False")
-                interesting = "False" 
+
                 mqttOutLine = thisFunctionName + " ==> local DB classifies as NOT an interesting aircraft: " + aircraftID
-                outPutMQTTnoColor("planes/trace", mqttOutLine)
-                
+                outPutMQTTnoColor("planes/trace", mqttOutLine)   
+            
+                         
             mqttOutLine = thisFunctionName + " ==> adding aircraft to session object: " + aircraftID
             outPutMQTTnoColor("planes/trace", mqttOutLine)  
             #aircraftSession.append(p)
-          
+            operatorFlagCode = strICAO
             if operatorFlagCode not in excludeOperatorList:        
                     addAircraftDB(aircraftID)  
                     conn = create_connection(database)
@@ -117,7 +129,7 @@ def isKnownPlane(aircraftID):
                     cur = conn.commit
                     cur = conn.close 
                     #aircraftSession.append(p)
-                    mqttOutLine = thisFunctionName + " ==> potentially interesting operator: " + operatorFlagCode
+                    mqttOutLine = thisFunctionName + " ==> unfiltered  operator: " + operatorFlagCode
                     outPutMQTTnoColor("planes/trace", mqttOutLine)
                     outPutAircraft()
                     
@@ -179,8 +191,11 @@ def addAircraftDB(icaohex):
        # cur.execute("INSERT INTO AIRCRAFT VALUES('icaohex2','2','3','4','5', 6);")
         #print("unknown plane - adding  aircraft row") 
         cur = conn.commit
-        cur = conn.close   
-
+        cur = conn.close  
+        outPutMQTTnoColor( "planes/trace", thisFunctionName + "   added plane to local db: " + strICAO + " " +owners)  
+  else:
+        outPutMQTTnoColor( "planes/trace", thisFunctionName + "   plane already in local db: " + strICAO + " " +owners)
+       
 #add an aircraft to the session object
 def outPutAircraft():
     thisFunctionName = sys._getframe(  ).f_code.co_name
@@ -335,7 +350,7 @@ def interestingAircraft():
     if interestCount > 0:
        interestingAircraftCount  += 1
        outPutMQTTnoColor("planes/interestingAircraft", str(interestingAircraftCount))
-       mqttOutLine = thisFunctionName + " ==> determined to be interesting aircraft"
+       mqttOutLine = thisFunctionName + " ==> determined to be interesting aircraft" + str(interestCount)
        outPutMQTTnoColor("planes/trace", mqttOutLine)      
        return True
        
@@ -393,14 +408,15 @@ def isKnownPlaneDB(aircraftID):
 
         icaohex =row[0]
         owners =row[1]
-        operatorFlagCode =row[2]
+        #operatorFlagCode =row[2]
+        strICAO = row[2]
         strReg =row[3]
         strType =row[4]
         epochTime =row[5]
         interesting =row[6]
         knownPlane = "True"
         
-        strICAO = str(operatorFlagCode)
+        #strICAO = str(operatorFlagCode)
         strAircraftID = str(aircraftID)
         p = Aircraft(str(aircraftID))
         p.set_Registration( strReg)
@@ -649,6 +665,7 @@ outPutMQTTnoColor( "planes/trace", thisFunctionName)
 # grab aircraft.json from the reciever
 
 receiver_url ='http://192.168.0.116'
+#receiver_url ='http://192.168.0.55:8080' 
 adsbExchangeBase = 'https://globe.adsbexchange.com/?icao='
 while True:
   thisFunctionName = sys._getframe(  ).f_code.co_name + "forever while loop startup ++++++++++++++++++++++++++++++++++++++++"
