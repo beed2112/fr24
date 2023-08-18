@@ -108,7 +108,7 @@ def isKnownPlane(aircraftID):
 
             if (interesting == 'True'):
 
-                    mqttOutLine = thisFunctionName + " ==> interestingAircraft classifies as an interesting aircraft: " + aircraftID
+                    mqttOutLine = thisFunctionName + " ==> local DB classifies as an interesting aircraft: " + aircraftID
                     outPutMQTTnoColor("planes/trace", mqttOutLine)
             else:
 
@@ -131,7 +131,7 @@ def isKnownPlane(aircraftID):
                     #aircraftSession.append(p)
                     mqttOutLine = thisFunctionName + " ==> unfiltered  operator: " + operatorFlagCode
                     outPutMQTTnoColor("planes/trace", mqttOutLine)
-                    outPutAircraft()
+                    #outPutAircraft()
                     
             else:
                  filteredAircraft = filteredAircraft +1  
@@ -239,13 +239,27 @@ def outPutAircraft():
     
     #outLine = dataSource + " | " +  str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
 
-    outLine = str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
+    if str(aircraftSession[itemNum].get_OperatorFlagCode()) not in excludeOperatorList:        
+        outLine = str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
  
-    print(outLine)   
-    mqttOutLine = str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration()) + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type())
+        print(outLine)   
+        mqttOutLine = str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration()) + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type())
+        outPutMQTT(mqttOutColor, "planes/console", mqttOutLine) 
+        mqttOutLine = thisFunctionName + " ==> outputting plane information: " + str(aircraftSession[itemNum].get_aircraftID())    
+    else:
+            filteredAircraft = filteredAircraft +1  
+            mqttOutLine = thisFunctionName + " ==> filtered operator: " + str(aircraftSession[itemNum].get_OperatorFlagCode())
+                       
 
 
-    outPutMQTT(mqttOutColor, "planes/console", mqttOutLine) 
+
+    # outLine = str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
+ 
+    # print(outLine)   
+    # mqttOutLine = str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration()) + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type())
+
+
+    outPutMQTT(mqttOutColor, "planes/trace", mqttOutLine) 
                             
 def addAircraft(aircraftID):
 
@@ -313,7 +327,7 @@ def addAircraft(aircraftID):
             #aircraftSession.append(p)
             mqttOutLine = thisFunctionName + " ==> potentially interesting operator: " + strICAO
             outPutMQTTnoColor("planes/trace", mqttOutLine)
-            outPutAircraft()
+            #outPutAircraft()
             
     else:
          filteredAircraft = filteredAircraft +1  
@@ -715,6 +729,7 @@ while True:
 
 #loop thru the aircraft 
   i = 00
+  
 
   while i < aircraftCount:
    iPrint = i + 1 
@@ -814,7 +829,7 @@ while True:
        outPutMQTTnoColor("planes/trace", thisFunctionName)      
 
 
-  thisFunctionName = sys._getframe(  ).f_code.co_name + "aircraft processing loop ENDS           " + icaohex
+  thisFunctionName = sys._getframe(  ).f_code.co_name + "aircraft processing loop ENDS           " 
   outPutMQTTnoColor("planes/trace", thisFunctionName)  
   thisFunctionName = "sleeping........................" 
   outPutMQTTnoColor("planes/trace", thisFunctionName)        
