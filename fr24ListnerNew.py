@@ -247,7 +247,7 @@ def outPutAircraft():
         outPutMQTT(mqttOutColor, "planes/console", mqttOutLine) 
         mqttOutLine = thisFunctionName + " ==> outputting plane information: " + str(aircraftSession[itemNum].get_aircraftID())    
     else:
-            filteredAircraft = filteredAircraft +1  
+            #filteredAircraft = filteredAircraft +1  
             mqttOutLine = thisFunctionName + " ==> filtered operator: " + str(aircraftSession[itemNum].get_OperatorFlagCode())
                        
 
