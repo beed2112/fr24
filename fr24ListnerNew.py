@@ -129,13 +129,13 @@ def isKnownPlane(aircraftID):
                     cur = conn.commit
                     cur = conn.close 
                     #aircraftSession.append(p)
-                    mqttOutLine = thisFunctionName + " ==> unfiltered  operator: " + operatorFlagCode
+                    mqttOutLine = thisFunctionName + " ==> UNFILTERED  operator: " + operatorFlagCode
                     outPutMQTTnoColor("planes/trace", mqttOutLine)
                     #outPutAircraft()
                     
             else:
                  filteredAircraft = filteredAircraft +1  
-                 mqttOutLine = thisFunctionName + " ==> filtered operator: " + operatorFlagCode
+                 mqttOutLine = thisFunctionName + " ==> FILTERED operator: " + operatorFlagCode
                  outPutMQTTnoColor("planes/trace", mqttOutLine)           
             return True
     mqttOutLine = thisFunctionName + " ==> aircraft info not in session object: " + aircraftID
@@ -619,6 +619,8 @@ def addIfNewNotInterestinig(aircraftID):
 
 sampling_period =60
 
+
+
 sampling_period_seconds = int(sampling_period)
 
 excludeOperatorList="LXJ,AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,ASH,DAL,ENY,NKS,VOI,JBU,WSW,UPS,SWQ,ABX,FDX,QXE,SLI,EJA,JZA,ROU,GAJ,FDY,CFS,NJAS"
@@ -730,7 +732,6 @@ while True:
 #loop thru the aircraft 
   i = 00
   
-
   while i < aircraftCount:
    iPrint = i + 1 
    icaohex = aircraft_data['aircraft'][i]['hex']
@@ -828,12 +829,16 @@ while True:
        thisFunctionName = outline 
        outPutMQTTnoColor("planes/trace", thisFunctionName)      
 
+   thisFunctionName = "processing loop     ==> " 
+   outPutMQTTnoColor("planes/trace", thisFunctionName + "COMPLETED processing aircraft: " + icaohex ) 
 
   thisFunctionName = sys._getframe(  ).f_code.co_name + "aircraft processing loop ENDS           " 
   outPutMQTTnoColor("planes/trace", thisFunctionName)  
   thisFunctionName = "sleeping........................" 
   outPutMQTTnoColor("planes/trace", thisFunctionName)        
-  myCount = 0   
+  myCount = 0  
+  
+
   for  myCount in range(sampling_period_seconds):
    print(".",end="")
    time.sleep(1) 
