@@ -78,6 +78,7 @@ def isKnownPlane(aircraftID):
     global excludeOperatorList
     thisFunctionName = sys._getframe(  ).f_code.co_name
     outPutMQTTnoColor("planes/trace", thisFunctionName)   
+    interesting = 'False'
     for p in aircraftSession:
         if( p.aircraftID == aircraftID):
             icaohex =aircraftID 
