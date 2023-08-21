@@ -718,10 +718,11 @@ while True:
   currentTime = time.localtime()
   currentHour = currentTime.tm_hour
   currentMinute = currentTime.tm_hour
-  myCurrentTIme = str(currentHour) + ":" + str(currentMinute) 
+  mtCurrentTime = " " 
+  myCurrentTime = str(currentHour) + ":" + str(currentMinute) 
   mqttLine1 =  "+++--Curr " + time.asctime(time.localtime(time.time()))
   part1 =  "+++" 
-  part2 =  "-- Strt " + startTime + "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount) + "-- flt " + str(filteredAircraftCount)
+  part2 =  "-- Strt " + myCurrentTime + "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount) + "-- flt " + str(filteredAircraftCount)
   mqttLine2 =  "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount)
   part4 = "--wsCall " + str(webserviceCalls) + "--wsErr " + str(webServiceError)
   part5 = "--knwnNoHit " + str(knownNoHitDB) +  "--nohit " + str(nohit) + "--lclDB " + str(localResolve)
