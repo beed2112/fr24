@@ -718,7 +718,7 @@ while True:
   currentTime = time.localtime()
   currentHour = currentTime.tm_hour
   currentMinute = currentTime.tm_hour
-  myCurrentTIme = currentHour + ":" + currentMinute 
+  myCurrentTIme = str(currentHour) + ":" + str(currentMinute) 
   mqttLine1 =  "+++--Curr " + time.asctime(time.localtime(time.time()))
   part1 =  "+++" 
   part2 =  "-- Strt " + startTime + "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount) + "-- flt " + str(filteredAircraftCount)
