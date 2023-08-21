@@ -357,6 +357,8 @@ def interestingAircraft():
 
     if strICAO in watchICAO:
         interestCount += 1
+        mqttOutLine = thisFunctionName + " ==> interesting operator" 
+        outPutMQTTnoColor("planes/trace", mqttOutLine)       
 
     if strReg in watchReg:
         interestCount += 1
@@ -366,7 +368,7 @@ def interestingAircraft():
     if interestCount > 0:
        interestingAircraftCount  += 1
        outPutMQTTnoColor("planes/interestingAircraft", str(interestingAircraftCount))
-       mqttOutLine = thisFunctionName + " ==> determined to be interesting aircraft" + str(interestCount)
+       mqttOutLine = thisFunctionName + " ==> determined to be interesting aircraft" 
        outPutMQTTnoColor("planes/trace", mqttOutLine)      
        return True
        
@@ -648,6 +650,10 @@ global knownNoHitDB
 global setOutcolor
 global mqttOutColor
 global alertCount
+global watchlistOwner
+global watchReg
+global watchICAO
+
 
 database = "/fr24db/aircraftMon.db" 
 #database = "/home/beed2112/fr24db/aircraftMon.db"   #local 
@@ -714,10 +720,13 @@ while True:
       outPutMQTTnoColor("planes/trace", thisFunctionName)     
 
   totalAircraftCount = totalAircraftCount + aircraftCount
-
+  currentTime = time.localtime()
+  currentHour = currentTime.tm_hour
+  currentMinute = currentTime.tm_hour
+  myCurrentTIme = currentHour + ":" + currentMinute 
   mqttLine1 =  "+++--Curr " + time.asctime(time.localtime(time.time()))
   part1 =  "+++" 
-  part2 =  "-- Strt " + startTime + "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount)
+  part2 =  "-- Strt " + startTime + "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount) + "-- flt " + str(filteredAircraftCount)
   mqttLine2 =  "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount)
   part4 = "--wsCall " + str(webserviceCalls) + "--wsErr " + str(webServiceError)
   part5 = "--knwnNoHit " + str(knownNoHitDB) +  "--nohit " + str(nohit) + "--lclDB " + str(localResolve)
