@@ -620,18 +620,6 @@ def addIfNewNotInterestinig(aircraftID):
 
 ##-----------------------------------------------------------------------------------------------------------------------------###
 ### mainline
-
-sampling_period =60
-
-
-
-sampling_period_seconds = int(sampling_period)
-
-excludeOperatorList="LXJ,AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,ASH,DAL,ENY,NKS,VOI,JBU,WSW,UPS,SWQ,ABX,FDX,QXE,SLI,EJA,JZA,ROU,GAJ,FDY,CFS,NJAS"
-watchlistOwner= ["Aces","ACES","Missile Defense Agency","NASCAR", "Motorsports","Federal", "United States", "Oprah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Museum", "Google", "Apple", "Penske" , "Cardinals" , "Stewart-Haas" , "Tanker"]
-watchReg="N44SF,N812LE,N353P,N781MM,N88WR,N383LS,N78HV,N4DP,N9165H,N519JG,N280NV"
-watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1,L1P,T6,BGR,TNK,P4Y,A4"
-
 global aircraftSession
 global noHitSession
 global icao_data
@@ -654,6 +642,13 @@ global watchlistOwner
 global watchReg
 global watchICAO
 
+sampling_period =60
+sampling_period_seconds = int(sampling_period)
+
+excludeOperatorList="LXJ,AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,ASH,DAL,ENY,NKS,VOI,JBU,WSW,UPS,SWQ,ABX,FDX,QXE,SLI,EJA,JZA,ROU,GAJ,FDY,CFS,NJAS"
+watchlistOwner= ["Aces","ACES","Missile Defense Agency","NASCAR", "Motorsports","Federal", "United States", "Oprah", "Police", "State Farm", "Sherrif", "Arizona Department", "NASA", "Air Force", "Museum", "Google", "Apple", "Penske" , "Cardinals" , "Stewart-Haas" , "Tanker"]
+watchReg="N44SF,N812LE,N353P,N781MM,N88WR,N383LS,N78HV,N4DP,N9165H,N519JG,N280NV"
+watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1,L1P,T6,BGR,TNK,P4Y,A4"
 
 database = "/fr24db/aircraftMon.db" 
 #database = "/home/beed2112/fr24db/aircraftMon.db"   #local 
