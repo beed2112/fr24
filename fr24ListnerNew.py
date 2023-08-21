@@ -202,7 +202,8 @@ def outPutAircraft():
     thisFunctionName = sys._getframe(  ).f_code.co_name
     outPutMQTTnoColor("planes/trace", thisFunctionName)   
     global mqttOutColor
-    global alertCount  
+    global alertCount 
+    global filteredAircraft
     adsbExchangeBaseFull = adsbExchangeBase + str(icaohex) 
     itemNum = returnPlaneIndex(str(icaohex))
     outcolor= setOutcolor
@@ -248,7 +249,7 @@ def outPutAircraft():
         outPutMQTT(mqttOutColor, "planes/console", mqttOutLine) 
         mqttOutLine = thisFunctionName + " ==> outputting plane information: " + str(aircraftSession[itemNum].get_aircraftID())    
     else:
-            #filteredAircraft = filteredAircraft +1  
+            filteredAircraft = filteredAircraft +1  
             mqttOutLine = thisFunctionName + " ==> filtered operator: " + str(aircraftSession[itemNum].get_OperatorFlagCode())
                        
 
@@ -474,7 +475,7 @@ def isKnownPlaneDB(aircraftID):
             interesting = "False" 
 
         aircraftSession.append(p)
-        outPutAircraft()
+        #outPutAircraft()
         return True
     
     mqttOutLine = thisFunctionName + " ==> aircraft info NOT in LOCALDB: " + aircraftID
@@ -538,7 +539,7 @@ def checkFAA(aircraftID):
             interesting = "False" 
 
         aircraftSession.append(p)
-        outPutAircraft()
+        #outPutAircraft()
         return True
     mqttOutLine = thisFunctionName + " ==> aircraft info NOT in LOCAL FAADB: " + aircraftID
     outPutMQTTnoColor("planes/trace", mqttOutLine)       
@@ -748,7 +749,7 @@ while True:
       knownAircraft = "True"
       localMemResolve += 1
       dataSource = "memory    "
-      #outPutAircraft()
+      outPutAircraft()
       #addAircraft(icaohex)
    else: 
 
@@ -756,7 +757,7 @@ while True:
         knownAircraft = "True"
         localResolve += 1
         dataSource = "local     "
-        #outPutAircraft()
+        outPutAircraft()
         #addAircraft(icaohex)
     else:
         #if ( not isKnownNoHitCheck(icaohex) ):
@@ -781,6 +782,7 @@ while True:
                         thisFunctionName = sys._getframe(  ).f_code.co_name + " ==> aircraft info provided be WEBSERVICE            " + icaohex
                         outPutMQTTnoColor("planes/trace", thisFunctionName)                          
                         addAircraft(icaohex)
+                        outPutAircraft()
                         
                     else:
                             addNoHit(icaohex)
