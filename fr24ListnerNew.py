@@ -270,7 +270,7 @@ def outPutAircraft():
         mqttOutLine = thisFunctionName + " ==> outputting plane information: " + str(aircraftSession[itemNum].get_aircraftID())    
     else:
             filteredAircraft = filteredAircraft +1  
-            mqttOutLine = thisFunctionName + " ==> filtered operator: " + str(aircraftSession[itemNum].get_OperatorFlagCode())
+            mqttOutLine = thisFunctionName + " ==> filtered operator: " + str(aircraftSession[itemNum].get_aircraftID())
                        
 
 
