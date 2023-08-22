@@ -672,7 +672,7 @@ watchReg="N44SF,N812LE,N353P,N781MM,N88WR,N383LS,N78HV,N4DP,N9165H,N519JG,N280NV
 watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1,L1P,T6,BGR,TNK,P4Y,A4"
 
 database = "/fr24db/aircraftMon.db" 
-database = "/home/beed2112/fr24db/aircraftMon.db"   #local 
+#database = "/home/beed2112/fr24db/aircraftMon.db"   #local 
 
 
 aircraftSession = []
