@@ -10,7 +10,6 @@ import requests
 from termcolor import colored
 import sqlite3
 from sqlite3 import Error
-#sys.path.append('/home/beed2112/fr24')
 from aircraft import Aircraft
 from nohitAircraft import noHit
 from datetime import datetime, timedelta  
@@ -27,18 +26,8 @@ def outPutMQTT(outColor, outTopic, outMessage):
   client = paho.Client()
   client.username_pw_set(mqttUser, mqttPass)
   
-
-  #client.connect(mqttServer)
-  #if ( not client.is_connected()) :
   client.connect(mqttServer)
-
   client.publish(outTopic, mqttOutLine)  
-
-  #cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
-  
-  #cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + ' -u ' + mqttUser  + ' -P ' +  mqttPass + ' -m "'  + mqttOutLine + '"'
-  
-  #os.system(cmd) 
 
 def outPutMQTTnoColor(outTopic, outMessage):
 
@@ -46,19 +35,13 @@ def outPutMQTTnoColor(outTopic, outMessage):
   mqttUser = "me"
   mqttPass = "me"
 
-
   client = paho.Client()
   client.username_pw_set(mqttUser, mqttPass)
   myFooConnect = client.is_connected()
   
-  #if ( client.is_connected() == 'False') :
-  client.connect(mqttServer)
-
-  client.publish(outTopic, outMessage)
-
-  #cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + ' -u ' + mqttUser  + ' -P ' +  mqttPass + ' -m "'  + outMessage + '"'
   
-  #os.system(cmd) 
+  client.connect(mqttServer)
+  client.publish(outTopic, outMessage)
 
 # cleanup aged Noaircraft 
 def cleanNoHitAircraft():
@@ -741,7 +724,7 @@ while True:
   currentMinute = currentTime.tm_hour
   mtCurrentTime = " " 
   myCurrentTime = str(currentHour) + ":" + str(currentMinute) 
-  mqttLine1 =  "+++--Curr " + time.asctime(time.localtime(time.time()))
+  mqttLine1 =  "+++--Curr " + myCurrentTime
   part1 =  "+++" 
   part2 =  "-- Strt " + myCurrentTime + "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount) + "-- flt " + str(filteredAircraft)
   mqttLine2 =  "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount)
