@@ -281,7 +281,7 @@ def outPutAircraft():
     # mqttOutLine = str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration()) + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type())
 
 
-    outPutMQTT(mqttOutColor, "planes/trace", mqttOutLine) 
+    outPutMQTTnoColor("planes/trace", mqttOutLine) 
                             
 def addAircraft(aircraftID):
 
