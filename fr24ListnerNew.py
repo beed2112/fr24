@@ -29,8 +29,8 @@ def outPutMQTT(outColor, outTopic, outMessage):
   
 
   #client.connect(mqttServer)
-  if ( not client.is_connected()) :
-     client.connect(mqttServer)
+  #if ( not client.is_connected()) :
+  client.connect(mqttServer)
 
   client.publish(outTopic, mqttOutLine)  
 
@@ -51,8 +51,8 @@ def outPutMQTTnoColor(outTopic, outMessage):
   client.username_pw_set(mqttUser, mqttPass)
   myFooConnect = client.is_connected()
   
-  if ( client.is_connected() == 'False') :
-     client.connect(mqttServer)
+  #if ( client.is_connected() == 'False') :
+  client.connect(mqttServer)
 
   client.publish(outTopic, outMessage)
 
