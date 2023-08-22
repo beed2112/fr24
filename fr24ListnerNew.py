@@ -24,11 +24,21 @@ def outPutMQTT(outColor, outTopic, outMessage):
   
   mqttOutLine = str(outColor) + "|" +  outMessage
 
+  client = paho.Client()
+  client.username_pw_set(mqttUser, mqttPass)
+  
+
+  #client.connect(mqttServer)
+  if ( not client.is_connected()) :
+     client.connect(mqttServer)
+
+  client.publish(outTopic, mqttOutLine)  
+
   #cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
   
-  cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + ' -u ' + mqttUser  + ' -P ' +  mqttPass + ' -m "'  + mqttOutLine + '"'
+  #cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + ' -u ' + mqttUser  + ' -P ' +  mqttPass + ' -m "'  + mqttOutLine + '"'
   
-  os.system(cmd) 
+  #os.system(cmd) 
 
 def outPutMQTTnoColor(outTopic, outMessage):
 
@@ -36,10 +46,19 @@ def outPutMQTTnoColor(outTopic, outMessage):
   mqttUser = "me"
   mqttPass = "me"
 
+
+  client = paho.Client()
+  client.username_pw_set(mqttUser, mqttPass)
+  myFooConnect = client.is_connected()
   
-  cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + ' -u ' + mqttUser  + ' -P ' +  mqttPass + ' -m "'  + outMessage + '"'
+  if ( client.is_connected() == 'False') :
+     client.connect(mqttServer)
+
+  client.publish(outTopic, outMessage)
+
+  #cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + ' -u ' + mqttUser  + ' -P ' +  mqttPass + ' -m "'  + outMessage + '"'
   
-  os.system(cmd) 
+  #os.system(cmd) 
 
 # cleanup aged Noaircraft 
 def cleanNoHitAircraft():
@@ -653,7 +672,7 @@ watchReg="N44SF,N812LE,N353P,N781MM,N88WR,N383LS,N78HV,N4DP,N9165H,N519JG,N280NV
 watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1,L1P,T6,BGR,TNK,P4Y,A4"
 
 database = "/fr24db/aircraftMon.db" 
-#database = "/home/beed2112/fr24db/aircraftMon.db"   #local 
+database = "/home/beed2112/fr24db/aircraftMon.db"   #local 
 
 
 aircraftSession = []
