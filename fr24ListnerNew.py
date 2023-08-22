@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import time
+import paho.mqtt.client as paho
 
 #from datetime import date
 import datetime
@@ -641,6 +642,7 @@ global alertCount
 global watchlistOwner
 global watchReg
 global watchICAO
+global interestingAircraftCount
 
 sampling_period =60
 sampling_period_seconds = int(sampling_period)
