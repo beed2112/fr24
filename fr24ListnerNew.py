@@ -120,9 +120,7 @@ def isKnownPlane(aircraftID):
                 outPutMQTTnoColor("planes/trace", mqttOutLine)   
             
                          
-            mqttOutLine = thisFunctionName + " ==> adding aircraft to session object: " + aircraftID
-            outPutMQTTnoColor("planes/trace", mqttOutLine)  
-            #aircraftSession.append(p)
+            
             operatorFlagCode = strICAO
             if operatorFlagCode not in excludeOperatorList:        
                     addAircraftDB(aircraftID)  
