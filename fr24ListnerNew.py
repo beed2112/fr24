@@ -10,10 +10,11 @@ import requests
 from termcolor import colored
 import sqlite3
 from sqlite3 import Error
+#sys.path.append('/home/beed2112/fr24')
 from aircraft import Aircraft
 from nohitAircraft import noHit
 from datetime import datetime, timedelta  
-global strICAO 
+
 
 def outPutMQTT(outColor, outTopic, outMessage):
 
@@ -26,8 +27,18 @@ def outPutMQTT(outColor, outTopic, outMessage):
   client = paho.Client()
   client.username_pw_set(mqttUser, mqttPass)
   
+
+  #client.connect(mqttServer)
+  #if ( not client.is_connected()) :
   client.connect(mqttServer)
+
   client.publish(outTopic, mqttOutLine)  
+
+  #cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
+  
+  #cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + ' -u ' + mqttUser  + ' -P ' +  mqttPass + ' -m "'  + mqttOutLine + '"'
+  
+  #os.system(cmd) 
 
 def outPutMQTTnoColor(outTopic, outMessage):
 
@@ -35,13 +46,19 @@ def outPutMQTTnoColor(outTopic, outMessage):
   mqttUser = "me"
   mqttPass = "me"
 
+
   client = paho.Client()
   client.username_pw_set(mqttUser, mqttPass)
   myFooConnect = client.is_connected()
-  
-  
+
+  #if ( client.is_connected() == 'False') :
   client.connect(mqttServer)
+
   client.publish(outTopic, outMessage)
+
+  #cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + ' -u ' + mqttUser  + ' -P ' +  mqttPass + ' -m "'  + outMessage + '"'
+  
+  #os.system(cmd) 
 
 # cleanup aged Noaircraft 
 def cleanNoHitAircraft():
@@ -79,6 +96,7 @@ def isKnownPlane(aircraftID):
     global aircraftSession
     global filteredAircraft
     global excludeOperatorList
+    global strICAO 
     thisFunctionName = sys._getframe(  ).f_code.co_name
     outPutMQTTnoColor("planes/trace", thisFunctionName)   
     interesting = 'False'
@@ -112,15 +130,15 @@ def isKnownPlane(aircraftID):
 
             if (interesting == 'True'):
 
-                    mqttOutLine = thisFunctionName + " ==> local DB classifies as an interesting aircraft: " + aircraftID
+                    mqttOutLine = thisFunctionName + " ==> memory object classifies as an interesting aircraft: " + aircraftID
                     outPutMQTTnoColor("planes/trace", mqttOutLine)
             else:
 
-                mqttOutLine = thisFunctionName + " ==> local DB classifies as NOT an interesting aircraft: " + aircraftID
+                mqttOutLine = thisFunctionName + " ==> memory object classifies as NOT an interesting aircraft: " + aircraftID
                 outPutMQTTnoColor("planes/trace", mqttOutLine)   
             
                          
-            
+
             operatorFlagCode = strICAO
             if operatorFlagCode not in excludeOperatorList:        
                     addAircraftDB(aircraftID)  
@@ -251,7 +269,7 @@ def outPutAircraft():
         mqttOutLine = thisFunctionName + " ==> outputting plane information: " + str(aircraftSession[itemNum].get_aircraftID())    
     else:
             filteredAircraft = filteredAircraft +1  
-            mqttOutLine = thisFunctionName + " ==> filtered operator: " + str(aircraftSession[itemNum].get_aircraftID())
+            mqttOutLine = thisFunctionName + " ==> filtered operator: " + str(aircraftSession[itemNum].get_OperatorFlagCode())
                        
 
 
@@ -262,7 +280,7 @@ def outPutAircraft():
     # mqttOutLine = str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration()) + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type())
 
 
-    outPutMQTTnoColor("planes/trace", mqttOutLine) 
+    outPutMQTT(mqttOutColor, "planes/trace", mqttOutLine) 
                             
 def addAircraft(aircraftID):
 
@@ -328,13 +346,13 @@ def addAircraft(aircraftID):
             cur = conn.commit
             cur = conn.close 
             #aircraftSession.append(p)
-            mqttOutLine = thisFunctionName + " ==> potentially interesting operator: " + strICAO
+            mqttOutLine = thisFunctionName + " ==> NOT a FILTERED operator: " + strICAO
             outPutMQTTnoColor("planes/trace", mqttOutLine)
             #outPutAircraft()
             
     else:
          filteredAircraft = filteredAircraft +1  
-         mqttOutLine = thisFunctionName + " ==> filtered operator: " + strICAO
+         mqttOutLine = thisFunctionName + " ==> FILTERED operator: " + strICAO
          outPutMQTTnoColor("planes/trace", mqttOutLine) 
 #    return
 
@@ -722,7 +740,7 @@ while True:
   currentMinute = currentTime.tm_hour
   mtCurrentTime = " " 
   myCurrentTime = str(currentHour) + ":" + str(currentMinute) 
-  mqttLine1 =  "+++--Curr " + myCurrentTime
+  mqttLine1 =  "+++--Curr " + time.asctime(time.localtime(time.time()))
   part1 =  "+++" 
   part2 =  "-- Strt " + myCurrentTime + "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount) + "-- flt " + str(filteredAircraft)
   mqttLine2 =  "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount)
@@ -794,13 +812,18 @@ while True:
                     else:
                             addNoHit(icaohex)
                             nohit += 1
-                            if (checkFAA(icaohex)):
-                                thisFunctionName = " ==> aircraft info provided by FAA database" 
-                                outPutMQTTnoColor("planes/trace", thisFunctionName)    
-                            else:  
-                                mqttOutLine =  icaohex + " " + str(nohit) 
-                                outPutMQTTnoColor("planes/nohit", mqttOutLine)
-                                addIfNewNoHit(icaohex)    
+                            mqttOutLine =  icaohex + " " + str(nohit) 
+                            outPutMQTTnoColor("planes/nohit", mqttOutLine)
+                            addIfNewNoHit(icaohex)
+
+                           # not using FAA                             
+                            # if (checkFAA(icaohex)):
+                            #     thisFunctionName = " ==> aircraft info provided by FAA database" 
+                            #     outPutMQTTnoColor("planes/trace", thisFunctionName)    
+                            # else:  
+                            #     mqttOutLine =  icaohex + " " + str(nohit) 
+                            #     outPutMQTTnoColor("planes/nohit", mqttOutLine)
+                            #     addIfNewNoHit(icaohex)    
                             
                 except (requests.exceptions.Timeout, requests.exceptions.ConnectTimeout, requests.exceptions.ReadTimeout, Exception) as e: 
                     strICAO = "ERROR"
@@ -847,6 +870,17 @@ while True:
   thisFunctionName = "sleeping........................" 
   outPutMQTTnoColor("planes/trace", thisFunctionName)        
   myCount = 0  
+ 
+  icaohex = ""
+  strICAO = ""
+  owners=  ""
+  strReg =  ""
+  strType = ""
+  strAircraftID = ""
+  knownAircraft = ""
+  dataSource = ""
+  setOutcolor = ""
+  mqttOutColor = "TFT_WHITE"  
   
 
   for  myCount in range(sampling_period_seconds):
