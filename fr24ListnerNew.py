@@ -26,19 +26,9 @@ def outPutMQTT(outColor, outTopic, outMessage):
 
   client = paho.Client()
   client.username_pw_set(mqttUser, mqttPass)
-  
-
-  #client.connect(mqttServer)
-  #if ( not client.is_connected()) :
   client.connect(mqttServer)
 
   client.publish(outTopic, mqttOutLine)  
-
-  #cmd = 'mosquitto_pub -h 192.168.0.253  -t planes/console -u me -P me -m "'  + mqttOutLine +'"'
-  
-  #cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + ' -u ' + mqttUser  + ' -P ' +  mqttPass + ' -m "'  + mqttOutLine + '"'
-  
-  #os.system(cmd) 
 
 def outPutMQTTnoColor(outTopic, outMessage):
 
@@ -46,19 +36,11 @@ def outPutMQTTnoColor(outTopic, outMessage):
   mqttUser = "me"
   mqttPass = "me"
 
-
   client = paho.Client()
   client.username_pw_set(mqttUser, mqttPass)
-  myFooConnect = client.is_connected()
-
-  #if ( client.is_connected() == 'False') :
   client.connect(mqttServer)
 
   client.publish(outTopic, outMessage)
-
-  #cmd = 'mosquitto_pub -h ' + mqttServer + ' -t  ' + outTopic  + ' -u ' + mqttUser  + ' -P ' +  mqttPass + ' -m "'  + outMessage + '"'
-  
-  #os.system(cmd) 
 
 # cleanup aged Noaircraft 
 def cleanNoHitAircraft():
@@ -114,19 +96,6 @@ def isKnownPlane(aircraftID):
             #print("known plane - local DB")
             mqttOutLine = thisFunctionName + " ==> aircraft info provided by session object"
             outPutMQTTnoColor("planes/trace", mqttOutLine)   
-            # if (interestingAircraft()):
-            #         p.set_Interesting("True")
-            #         #p.set_AlertTime(localtimeComputer)
-            #         #add the aircraft to the database
-            #         #add a seen record
-            #         interesting = "True"
-            #         mqttOutLine = thisFunctionName + " ==> interestingAircraft classifies as an interesting aircraft: " + aircraftID
-            #         outPutMQTTnoColor("planes/trace", mqttOutLine)
-            # else:
-            #     p.set_Interesting("False")
-            #     interesting = "False" 
-            #     mqttOutLine = thisFunctionName + " ==> local DB classifies as NOT an interesting aircraft: " + aircraftID
-            #     outPutMQTTnoColor("planes/trace", mqttOutLine)
 
             if (interesting == 'True'):
 
@@ -170,8 +139,12 @@ def returnPlaneIndex(aircraftID):
     count = 0
     for p in aircraftSession:
         if( p.aircraftID == aircraftID):
+            thisFunctionName = sys._getframe(  ).f_code.co_name + " GOOD returning index for found aircraft in session object " + aircraftID
+            outPutMQTTnoColor("planes/trace", thisFunctionName) 
             return count
         count = count + 1
+    thisFunctionName = sys._getframe(  ).f_code.co_name + " BAD returning index for unfound aircraft in session object  " + aircraftID
+    outPutMQTTnoColor("planes/trace", thisFunctionName)
     return -1 
 
 # see if we have already failed to find info on the aircraft 
@@ -228,59 +201,53 @@ def outPutAircraft():
     outcolor= setOutcolor
     mqttOutColor = "TFT_WHITE"
     minutes = 0 
-    if (str(aircraftSession[itemNum].get_aircraftID()[0:1]) != 'a'):
-        mqttOutColor = "TFT_GOLD"      
-       
-    if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
-        outcolor="green"
-        mqttOutColor = "TFT_GREEN"  
-        timeSince = datetime.today() - aircraftSession[itemNum].get_AlertTime() 
-        minutes = timeSince.total_seconds() / 60
+    if (itemNum != -1):
+        if (str(aircraftSession[itemNum].get_aircraftID()[0:1]) != 'a' ):
+            mqttOutColor = "TFT_GOLD"      
+        
+        if (str(aircraftSession[itemNum].get_Interesting()) == 'True'):
+            outcolor="green"
+            mqttOutColor = "TFT_GREEN"  
+            timeSince = datetime.today() - aircraftSession[itemNum].get_AlertTime() 
+            minutes = timeSince.total_seconds() / 60
 
-        if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
-            outcolor="yellow" 
-            mqttOutColor = "TFT_YELLOW"  
-            localtimeComputer = datetime.today()
-            aircraftSession[itemNum].set_AlertTime(localtimeComputer)
-            #mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
-            mqout =  str(aircraftSession[itemNum].get_Owner()) +". " + str(aircraftSession[itemNum].get_Type()) 
-            localtime = time.asctime( time.localtime(time.time()) )
-            mqout2 = localtime  + " " + str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type() +"  " + adsbExchangeBaseFull) 
-            outPutMQTTnoColor("planes/watchfor", mqout) 
-            outPutMQTTnoColor("planes/watchforLong", mqout2) 
-            alertCount  += 1
-            outPutMQTTnoColor("planes/alerts", str(alertCount)) 
-            conn = create_connection(database)
-            cur = conn.cursor()
-            epochTime = time.time() 
-            cur.execute("INSERT INTO AIRCRAFTSIGHTINGS VALUES(?,?);",(icaohex,epochTime ))
-            cur = conn.commit
-            cur = conn.close             
-    #outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  dataSource + " | " + adsbExchangeBaseFull) 
+            if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
+                outcolor="yellow" 
+                mqttOutColor = "TFT_YELLOW"  
+                localtimeComputer = datetime.today()
+                aircraftSession[itemNum].set_AlertTime(localtimeComputer)
+                #mqout = str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type()) 
+                mqout =  str(aircraftSession[itemNum].get_Owner()) +". " + str(aircraftSession[itemNum].get_Type()) 
+                localtime = time.asctime( time.localtime(time.time()) )
+                mqout2 = localtime  + " " + str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type() +"  " + adsbExchangeBaseFull) 
+                outPutMQTTnoColor("planes/watchfor", mqout) 
+                outPutMQTTnoColor("planes/watchforLong", mqout2) 
+                thisFunctionName = sys._getframe(  ).f_code.co_name + "ALERTING item number " + str(itemNum) + "str(icaohex)  " + str(icaohex) 
+                outPutMQTTnoColor("planes/trace", thisFunctionName) 
+                alertCount  += 1
+                outPutMQTTnoColor("planes/alerts", str(alertCount)) 
+                conn = create_connection(database)
+                cur = conn.cursor()
+                epochTime = time.time() 
+                cur.execute("INSERT INTO AIRCRAFTSIGHTINGS VALUES(?,?);",(icaohex,epochTime ))
+                cur = conn.commit
+                cur = conn.close             
+        #outLine = time.asctime(time.localtime(time.time()))+ " | " + str(aircraftSession[itemNum].get_WhenSeen()) + " | " + str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  dataSource + " | " + adsbExchangeBaseFull) 
+        
+        #outLine = dataSource + " | " +  str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
+
+        if str(aircraftSession[itemNum].get_OperatorFlagCode()) not in excludeOperatorList:        
+            outLine = str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
     
-    #outLine = dataSource + " | " +  str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
-
-    if str(aircraftSession[itemNum].get_OperatorFlagCode()) not in excludeOperatorList:        
-        outLine = str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
- 
-        print(outLine)   
-        mqttOutLine = str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration()) + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type())
-        outPutMQTT(mqttOutColor, "planes/console", mqttOutLine) 
-        mqttOutLine = thisFunctionName + " ==> outputting plane information: " + str(aircraftSession[itemNum].get_aircraftID())    
-    else:
-            filteredAircraft = filteredAircraft +1  
-            mqttOutLine = thisFunctionName + " ==> filtered operator: " + str(aircraftSession[itemNum].get_OperatorFlagCode())
-                       
-
-
-
-    # outLine = str(aircraftSession[itemNum].get_aircraftID())+ " | "+ str(aircraftSession[itemNum].get_Registration())  + " | " + str(aircraftSession[itemNum].get_Owner())+ " | " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " | " + str(aircraftSession[itemNum].get_Type() + " | " +  adsbExchangeBaseFull) 
- 
-    # print(outLine)   
-    # mqttOutLine = str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration()) + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type())
-
-
-    outPutMQTT(mqttOutColor, "planes/trace", mqttOutLine) 
+            print(outLine)   
+            mqttOutLine = str(aircraftSession[itemNum].get_aircraftID()) + " "+ str(aircraftSession[itemNum].get_Registration()) + " " + str(aircraftSession[itemNum].get_Owner())+ " " + str(aircraftSession[itemNum].get_OperatorFlagCode()) + " " + str(aircraftSession[itemNum].get_Type())
+            outPutMQTT(mqttOutColor, "planes/console", mqttOutLine) 
+            mqttOutLine = thisFunctionName + " ==> outputting plane information: " + str(aircraftSession[itemNum].get_aircraftID())    
+        else:
+                filteredAircraft = filteredAircraft +1  
+                mqttOutLine = thisFunctionName + " ==> filtered operator: " + str(aircraftSession[itemNum].get_OperatorFlagCode())
+                        
+        outPutMQTTnoColor("planes/trace", mqttOutLine) 
                             
 def addAircraft(aircraftID):
 
@@ -361,9 +328,7 @@ def addAircraft(aircraftID):
 def interestingAircraft():
     thisFunctionName = sys._getframe(  ).f_code.co_name
     outPutMQTTnoColor("planes/trace", thisFunctionName)   
-    #owners=icao_data['RegisteredOwners']
-    #strICAO = str(icao_data['OperatorFlagCod
-    #strReg = str(icao_data['Registration'])
+
     global interestingAircraftCount 
     interestCount = 0
     o= 0
@@ -396,16 +361,11 @@ def interestingAircraft():
         outPutMQTTnoColor("planes/trace", mqttOutLine)
         return False
 
-##-----------------------------------------------------------------------------------------------------------------------------###
-## this is DB interaction code
-
-
-
 
 
 def create_connection(db_file):
-    thisFunctionName = sys._getframe(  ).f_code.co_name
-    outPutMQTTnoColor("planes/trace", thisFunctionName)   
+    # thisFunctionName = sys._getframe(  ).f_code.co_name
+    # outPutMQTTnoColor("planes/trace", thisFunctionName)   
     conn = None
     try:
         conn = sqlite3.connect(db_file , isolation_level = None)
@@ -413,17 +373,7 @@ def create_connection(db_file):
         print(e)
 
     return conn
-"""  
-CREATE TABLE AIRCRAFT(                                                                                                                                                                                                                       
-    AIRCRAFTID TEXT PRIMARY KEY NOT NULL,                                                                                                                                                                                                    
-    AIRCRAFTOWNER TEXT KEY NOT NULL,
-    AIRCRAFTOPERATORFLAGCODE TEXT NOT NULL,
-    AIRCRAFTREGISTRATION TEXT NOT NULL,
-    AIRCRAFTTYPE TEXT NOT NULL,
-    AIRCRAFTFIRSTSEENEPOCH INT NOT NULL
-, AIRCRAFTINTERESTING);
 
-"""
 
 def isKnownPlaneDB(aircraftID):
     thisFunctionName = sys._getframe(  ).f_code.co_name
@@ -580,10 +530,8 @@ def dbKnownNoHit(aircraftID):
     cur.close 
 
     for row in rows:
-        #print(row)
-       # knownNoHitDB += 1
         return True
-   
+  
     return False        
 
 
@@ -663,6 +611,8 @@ global watchICAO
 global interestingAircraftCount
 
 sampling_period =60
+
+
 sampling_period_seconds = int(sampling_period)
 
 excludeOperatorList="LXJ,AAL,ASA,UAL,SWA,FFT,SKW,WJA,FLE,ASH,DAL,ENY,NKS,VOI,JBU,WSW,UPS,SWQ,ABX,FDX,QXE,SLI,EJA,JZA,ROU,GAJ,FDY,CFS,NJAS"
@@ -670,8 +620,9 @@ watchlistOwner= ["Aces","ACES","Missile Defense Agency","NASCAR", "Motorsports",
 watchReg="N44SF,N812LE,N353P,N781MM,N88WR,N383LS,N78HV,N4DP,N9165H,N519JG,N280NV"
 watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1,L1P,T6,BGR,TNK,P4Y,A4"
 
+filterAricraftID = "a81b45"
 database = "/fr24db/aircraftMon.db" 
-#database = "/home/beed2112/fr24db/aircraftMon.db"   #local 
+database = "/home/beed2112/fr24db/aircraftMon.db"   #local 
 
 
 aircraftSession = []
@@ -738,18 +689,21 @@ while True:
   currentTime = time.localtime()
   currentHour = currentTime.tm_hour
   currentMinute = currentTime.tm_hour
-  mtCurrentTime = " " 
+  myCurrentTime = " " 
   myCurrentTime = str(currentHour) + ":" + str(currentMinute) 
-  mqttLine1 =  "+++--Curr " + time.asctime(time.localtime(time.time()))
+  
   part1 =  "+++" 
   part2 =  "-- Strt " + myCurrentTime + "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount) + "-- flt " + str(filteredAircraft)
-  mqttLine2 =  "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount)
+  
   part4 = "--wsCall " + str(webserviceCalls) + "--wsErr " + str(webServiceError)
   part5 = "--knwnNoHit " + str(knownNoHitDB) +  "--nohit " + str(nohit) + "--lclDB " + str(localResolve)
   part6 = "lclMem " + str(localMemResolve) + "--+++"
-  #outline = part1 + part2 + "--" + part3 + "--" + "--"+ part4 + part5 +  "--"  + part6
+  
   outline =  part1 + part2 +  "--" + part4 + "--" + part5 +  "--"  + part6
   print (outline) 
+
+  mqttLine1 =  "+++--Curr " + time.asctime(time.localtime(time.time()))
+  mqttLine2 =  "--tot seen " + str(totalAircraftCount) + "-- cur " + str(aircraftCount)
 
   mqttOutColor =  "TFT_ORANGE" 
   mqttOutLine = mqttLine1 + mqttLine2 
@@ -892,11 +846,33 @@ while True:
 
   
    
+            # if (interestingAircraft()):
+            #         p.set_Interesting("True")
+            #         #p.set_AlertTime(localtimeComputer)
+            #         #add the aircraft to the database
+            #         #add a seen record
+            #         interesting = "True"
+            #         mqttOutLine = thisFunctionName + " ==> interestingAircraft classifies as an interesting aircraft: " + aircraftID
+            #         outPutMQTTnoColor("planes/trace", mqttOutLine)
+            # else:
+            #     p.set_Interesting("False")
+            #     interesting = "False" 
+            #     mqttOutLine = thisFunctionName + " ==> local DB classifies as NOT an interesting aircraft: " + aircraftID
+            #     outPutMQTTnoColor("planes/trace", mqttOutLine)
 
 
 
+"""  
+CREATE TABLE AIRCRAFT(                                                                                                                                                                                                                       
+    AIRCRAFTID TEXT PRIMARY KEY NOT NULL,                                                                                                                                                                                                    
+    AIRCRAFTOWNER TEXT KEY NOT NULL,
+    AIRCRAFTOPERATORFLAGCODE TEXT NOT NULL,
+    AIRCRAFTREGISTRATION TEXT NOT NULL,
+    AIRCRAFTTYPE TEXT NOT NULL,
+    AIRCRAFTFIRSTSEENEPOCH INT NOT NULL
+, AIRCRAFTINTERESTING);
 
-
+"""
 
 
 
