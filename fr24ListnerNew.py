@@ -662,7 +662,7 @@ while True:
   outPutMQTTnoColor("planes/trace", thisFunctionName)   
 
   #clean up memory objects
-     timeSinceLastCleanupAircraft = datetime.today() - lastCleanupTimeAircraft
+   timeSinceLastCleanupAircraft = datetime.today() - lastCleanupTimeAircraft
    minutesSinceLastCleanupAircraft = timeSinceLastCleanupAircraft.total_seconds() / 60
 
    if (minutesSinceLastCleanupAircraft> purgeMinutesAircraft):
