@@ -222,7 +222,7 @@ def outPutAircraft():
                 mqout2 = localtime  + " " + str(aircraftSession[itemNum].get_Registration())  + " " + str(aircraftSession[itemNum].get_Owner()) +"  " + str(aircraftSession[itemNum].get_Type() +"  " + adsbExchangeBaseFull) 
                 outPutMQTTnoColor("planes/watchfor", mqout) 
                 outPutMQTTnoColor("planes/watchforLong", mqout2) 
-                outPutMQTTnoColor("planes/watchforLong", + "ALERTING ===>  " + mqout2  ) 
+                outPutMQTTnoColor("planes/watchforLong", mqout2  ) 
                 thisFunctionName = sys._getframe(  ).f_code.co_name + "ALERTING item number " + str(itemNum) + "str(icaohex)  " + str(icaohex) 
                 outPutMQTTnoColor("planes/trace", thisFunctionName) 
                 alertCount  += 1
