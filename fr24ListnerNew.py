@@ -622,7 +622,7 @@ watchICAO="F16,S211,BE18,AJET,KMAX,HGT,ST75,RRR,MRF1,L1P,T6,BGR,TNK,P4Y,A4"
 
 filterAricraftID = "a81b45"
 database = "/fr24db/aircraftMon.db" 
-database = "/home/beed2112/fr24db/aircraftMon.db"   #local 
+#database = "/home/beed2112/fr24db/aircraftMon.db"   #local 
 
 
 aircraftSession = []
