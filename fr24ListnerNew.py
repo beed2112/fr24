@@ -660,6 +660,34 @@ adsbExchangeBase = 'https://globe.adsbexchange.com/?icao='
 while True:
   thisFunctionName = sys._getframe(  ).f_code.co_name + "forever while loop startup ++++++++++++++++++++++++++++++++++++++++"
   outPutMQTTnoColor("planes/trace", thisFunctionName)   
+
+  #clean up memory objects
+     timeSinceLastCleanupAircraft = datetime.today() - lastCleanupTimeAircraft
+   minutesSinceLastCleanupAircraft = timeSinceLastCleanupAircraft.total_seconds() / 60
+
+   if (minutesSinceLastCleanupAircraft> purgeMinutesAircraft):
+       #cleanAircraft()
+       lastCleanupTimeAircraft = datetime.today()
+       hold1 = len(aircraftSession)
+       cleanAircraft()
+       hold2 = len(aircraftSession)
+       outLine = time.asctime(time.localtime(time.time()))+ " | Aircraft memory clean up time before " + str(hold1) + " | after " + str(hold2) 
+       outcolor = "blue"
+       #print(colored(outLine, outcolor)) 
+       print(outline)
+       thisFunctionName = outline 
+       outPutMQTTnoColor("planes/trace", thisFunctionName)     
+       #aircraftSession = []
+       hold1 = len(noHitSession)
+       cleanNoHitAircraft()
+       hold2 = len(noHitSession)
+       outLine = time.asctime(time.localtime(time.time()))+ " | noHit memory clean up time before " + str(hold1) + " | after " + str(hold2) 
+       outcolor = "yellow"
+       #print(colored(outLine, outcolor)) 
+       print(outLine)
+       thisFunctionName = outline 
+       outPutMQTTnoColor("planes/trace", thisFunctionName)      
+  
   aircraftCount= 0 
      
 
@@ -790,31 +818,7 @@ while True:
             thisFunctionName = " ==> we know we can't find information on this aircraft" 
             outPutMQTTnoColor("planes/trace", thisFunctionName)          
 
-   timeSinceLastCleanupAircraft = datetime.today() - lastCleanupTimeAircraft
-   minutesSinceLastCleanupAircraft = timeSinceLastCleanupAircraft.total_seconds() / 60
 
-   if (minutesSinceLastCleanupAircraft> purgeMinutesAircraft):
-       #cleanAircraft()
-       lastCleanupTimeAircraft = datetime.today()
-       hold1 = len(aircraftSession)
-       cleanAircraft()
-       hold2 = len(aircraftSession)
-       outLine = time.asctime(time.localtime(time.time()))+ " | Aircraft memory clean up time before " + str(hold1) + " | after " + str(hold2) 
-       outcolor = "blue"
-       #print(colored(outLine, outcolor)) 
-       print(outline)
-       thisFunctionName = outline 
-       outPutMQTTnoColor("planes/trace", thisFunctionName)     
-       #aircraftSession = []
-       hold1 = len(noHitSession)
-       cleanNoHitAircraft()
-       hold2 = len(noHitSession)
-       outLine = time.asctime(time.localtime(time.time()))+ " | noHit memory clean up time before " + str(hold1) + " | after " + str(hold2) 
-       outcolor = "yellow"
-       #print(colored(outLine, outcolor)) 
-       print(outLine)
-       thisFunctionName = outline 
-       outPutMQTTnoColor("planes/trace", thisFunctionName)      
 
    thisFunctionName = "processing loop     ==> " 
    outPutMQTTnoColor("planes/trace", thisFunctionName + "COMPLETED processing aircraft: " + icaohex ) 
