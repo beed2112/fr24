@@ -156,7 +156,8 @@ def isKnownNoHitCheck(aircraftID):
             #print("known no hit")
             mqttOutLine = thisFunctionName + " ==> aircraft is kown to not return data from webservice"
             outPutMQTTnoColor("planes/trace", mqttOutLine)
-            return True
+            #return True  #experimenting 
+            return False
     return False
 
 # add an aircraft to the list used during the session
