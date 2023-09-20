@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 
 def outPutMQTT(outColor, outTopic, outMessage):
 
-  mqttServer = "192.168.0.253"
+  mqttServer = "mqtt"
   mqttUser = "me"
   mqttPass = "me"
   
@@ -32,7 +32,7 @@ def outPutMQTT(outColor, outTopic, outMessage):
 
 def outPutMQTTnoColor(outTopic, outMessage):
 
-  mqttServer = "192.168.0.253"
+  mqttServer = "mqtt"
   mqttUser = "me"
   mqttPass = "me"
 
@@ -692,7 +692,7 @@ thisFunctionName = "mainLine Startup"
 outPutMQTTnoColor( "planes/trace", thisFunctionName) 
 # grab aircraft.json from the reciever
 
-receiver_url ='http://192.168.0.116'
+receiver_url ='http://adsblistener'
 #receiver_url ='http://192.168.0.55:8080' 
 adsbExchangeBase = 'https://globe.adsbexchange.com/?icao='
 while True:
