@@ -19,6 +19,7 @@ from datetime import datetime, timedelta
 def outPutMQTT(outColor, outTopic, outMessage):
 
   mqttServer = "mqtt"
+  
   mqttUser = "me"
   mqttPass = "me"
   
@@ -33,6 +34,7 @@ def outPutMQTT(outColor, outTopic, outMessage):
 def outPutMQTTnoColor(outTopic, outMessage):
 
   mqttServer = "mqtt"
+  
   mqttUser = "me"
   mqttPass = "me"
 
@@ -237,7 +239,14 @@ def outPutAircraft():
                 mqttOutColor = "TFT_GREEN"  
                 timeSince = datetime.today() - aircraftSession[itemNum].get_AlertTime() 
                 minutes = timeSince.total_seconds() / 60
-
+                myAlertTime = aircraftSession[itemNum].get_AlertTime()
+                mySeenTime = aircraftSession[itemNum].get_WhenSeenComputer()
+                
+                if (myAlertTime == mySeenTime):
+                     myfoo = 1
+                if (minutes > 15):
+                     myfoo = 1
+                          
                 if ((aircraftSession[itemNum].get_AlertTime()) == aircraftSession[itemNum].get_WhenSeenComputer() or minutes > 15):
                     outcolor="yellow" 
                     mqttOutColor = "TFT_YELLOW"  
