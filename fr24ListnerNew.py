@@ -42,7 +42,8 @@ def outPutMQTTnoColor(outTopic, outMessage):
   client.username_pw_set(mqttUser, mqttPass)
   client.connect(mqttServer)
 
-  client.publish(outTopic, outMessage)
+  if (outTopic != "planes/trace"):
+      client.publish(outTopic, outMessage)
 
 # cleanup aged Noaircraft 
 def cleanNoHitAircraft():
