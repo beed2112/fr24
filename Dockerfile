@@ -1,18 +1,21 @@
-FROM alpine
-LABEL maintainer=beed2112
+FROM python:3
 
-RUN apk --no-cache add swatch ssmtp mosquitto mosquitto-clients tzdata
+RUN apt-get update && \
+    apt-get install -y bash-completion mosquitto-clients tzdata vim iputils-ping git && \
+    pip install --upgrade pip && \
+    pip install python-socketio websocket-client termcolor paho-mqtt datetime requests
+
+RUN wget "https://raw.githubusercontent.com/beed2112/fr24/masterOfAll/fr24Listner.py"
+RUN wget "https://raw.githubusercontent.com/beed2112/fr24/masterOfAll/aircraft.py"
+RUN wget "https://raw.githubusercontent.com/beed2112/fr24/masterOfAll/nohitAircraft.py"
 
 ENV TZ=America/Phoenix
+ENV MQTT_SERVER=mqtt
+ENV MQTT_USER=me
+ENV MQTT_PASS=me
+ENV DATABASE=/media/freewill/beed2112/hacktop/fr24db/aircraftMon.db
+ENV RECEIVER_URL=http://adsblistener
 
-RUN mkdir -p /logs
-RUN mkdir /fr24 
-COPY startupWrapper.sh /fr24/.
-COPY ncWrapper.sh /fr24/.
-COPY fr24mq.sh /fr24/.
-COPY fr24mq.confg /fr24/.
-RUN chmod +x /fr24/*.sh
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-VOLUME /logs
-
-CMD ["ash", "/fr24/startupWrapper.sh"]
+ENTRYPOINT ["python", "/fr24Listner.py"]
